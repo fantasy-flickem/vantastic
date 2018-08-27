@@ -1,10 +1,10 @@
 <template>
-  <div v-if='isLoggedIn'>
+  <div v-if='user'>
     <button @click='goBack()'>Back</button>
     <ul>
       <li><router-link :to="{ name: 'Week', params: { week_number: currentlyViewedWeek } }">Week</router-link></li>
       <li><router-link :to="{ name: 'Leaderboard' }">Leaderboard</router-link></li>
-      <li><router-link :to="{ name: 'Settings', params: { user_id: '123' } }">Settings</router-link></li>
+      <li><router-link :to="{ name: 'Settings', params: { uid: user.uid } }">Settings</router-link></li>
     </ul>
     <button @click='logout()'>Logout</button>
   </div>
@@ -22,7 +22,7 @@ export default {
     return {
       currentWeek: '1',
       currentlyViewedWeek: '2',
-      isLoggedIn: false
+      user: null
     }
   },
   methods: {
@@ -37,8 +37,11 @@ export default {
   },
   created () {
     firebase.auth().onAuthStateChanged((user) => {
-      if(user) { this.isLoggedIn = true }
-      else { this.isLoggedIn = false }
+      if (user) {
+        this.user = user
+      } else {
+        this.user = null
+      }
     })
   }
 }

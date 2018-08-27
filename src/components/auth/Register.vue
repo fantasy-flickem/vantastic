@@ -39,8 +39,9 @@ export default {
           .then(credentials => {
             let firebaseAuthUser = credentials.user
             db.collection('users').add({
-              UID: firebaseAuthUser.uid,
-              email: this.email
+              uid: firebaseAuthUser.uid,
+              email: this.email,
+              displayName: null
               // favoriteTeam: this.favoriteTeam
             })
           })

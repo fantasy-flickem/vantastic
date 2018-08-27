@@ -32,7 +32,7 @@ const router = new Router({
       component: Register
     },
     {
-      path: '/settings/:user_id',
+      path: '/settings/:uid',
       name: 'Settings',
       component: Settings,
       meta: {
