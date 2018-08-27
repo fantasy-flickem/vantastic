@@ -60,12 +60,10 @@ router.beforeEach((to, from, next) => {
     let currentUser = firebase.auth().currentUser
     if (currentUser) {
       next()
-    }
-    else {
+    } else {
       next({ name: 'Signin' })
     }
-  }
-  else {
+  } else {
     next()
   }
 })
