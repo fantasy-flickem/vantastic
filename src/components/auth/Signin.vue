@@ -35,24 +35,15 @@ export default {
     signin () {
       if (this.email && this.password) {
         this.feedback = null
-        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
-          .then(credentials => {
-            let firebaseAuthUser = credentials.user
-            db.collection('users').add({
-              UID: firebaseAuthUser.uid,
-              email: this.email
-              // favoriteTeam: this.favoriteTeam
-            })
-          })
+        firebase.auth().signInWithEmailAndPassword(this.email, this.password)
           .then(() => {
-            this.$router.push({ name: 'Landing' })
+            this.$router.push({ name: 'Week', params: { week_number: '1' } })
           })
           .catch(err => {
             this.feedback = err.message
           })
-      }
-      else {
-        this.feedback = 'Please enter your email address and password'
+      } else {
+        this.feedback = 'Please enter your email and password to sign in'
       }
     }
   }

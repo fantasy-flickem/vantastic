@@ -35,16 +35,23 @@ export default {
     register () {
       if (this.email && this.password) {
         this.feedback = null
-        firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+        firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+          .then(credentials => {
+            let firebaseAuthUser = credentials.user
+            db.collection('users').add({
+              UID: firebaseAuthUser.uid,
+              email: this.email
+              // favoriteTeam: this.favoriteTeam
+            })
+          })
           .then(() => {
-            this.$router.push({ name: 'Week', params: { week_number: '1' } })
+            this.$router.push({ name: 'Landing' })
           })
           .catch(err => {
             this.feedback = err.message
           })
-      }
-      else {
-        this.feedback = 'Please enter the email and password you\'d like to register with'
+      } else {
+        this.feedback = 'Please enter your email address and password you\'d like to register with'
       }
     }
   }
