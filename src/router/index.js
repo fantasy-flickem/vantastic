@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import firebase from 'firebase'
 
 import Landing from '@/components/Landing'
 import Leaderboard from '@/components/Leaderboard'
@@ -10,7 +11,7 @@ import Signup from '@/components/Signup'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -44,3 +45,20 @@ export default new Router({
     }
   ]
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some(rec => rec.meta.requiresAuth)) {
+    let currentUser = firebase.auth().currentUser
+    if (currentUser) {
+      next()
+    }
+    else {
+      next({ name: 'Signin' })
+    }
+  }
+  else {
+    next()
+  }
+})
+
+export default router
