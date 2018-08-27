@@ -13,14 +13,14 @@
 import Landing from './components/Landing'
 import Leaderboard from './components/Leaderboard'
 import Navbar from './components/Navbar'
-import Picks from './components/Picks'
+import Register from './components/auth/Register'
 import Settings from './components/Settings'
-import Signin from './components/Signin'
-import Signup from './components/Signup'
+import Signin from './components/auth/Signin'
+import Week from './components/Week'
 export default {
   name: 'vantastic',
   components: {
-    Landing, Leaderboard, Navbar, Picks, Settings, Signin, Signup
+    Landing, Leaderboard, Navbar, Register, Settings, Signin, Week
   },
   data () {
     return { }

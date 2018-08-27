@@ -4,10 +4,10 @@ import firebase from 'firebase'
 
 import Landing from '@/components/Landing'
 import Leaderboard from '@/components/Leaderboard'
-import Picks from '@/components/Picks'
+import Register from '@/components/auth/Register'
 import Settings from '@/components/Settings'
-import Signin from '@/components/Signin'
-import Signup from '@/components/Signup'
+import Signin from '@/components/auth/Signin'
+import Week from '@/components/Week'
 
 Vue.use(Router)
 
@@ -19,29 +19,38 @@ const router = new Router({
       component: Landing
     },
     {
+      path: '/leaderboard',
+      name: 'Leaderboard',
+      component: Leaderboard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/register',
+      name: 'Register',
+      component: Register
+    },
+    {
+      path: '/settings/:user_id',
+      name: 'Settings',
+      component: Settings,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/signin',
       name: 'Signin',
       component: Signin
     },
     {
-      path: '/signup',
-      name: 'Signup',
-      component: Signup
-    },
-    {
-      path: '/picks',
-      name: 'Picks',
-      component: Picks
-    },
-    {
-      path: '/leaderboard',
-      name: 'Leaderboard',
-      component: Leaderboard
-    },
-    {
-      path: '/settings/:user_id',
-      name: 'Settings',
-      component: Settings
+      path: '/weeks/:week_number',
+      name: 'Week',
+      component: Week,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
