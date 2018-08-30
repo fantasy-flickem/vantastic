@@ -4,7 +4,7 @@
       <h1>SETTINGS for {{ profile.displayName }}</h1>
       <div>
         <label for="email">Email</label>
-        <input id="email" type="email" v-model="profile.email">
+        <input id="email" type="email" v-model="profile.email" disabled>
       </div>
       <div>
         <label for="displayName">Display name</label>
@@ -14,7 +14,8 @@
       <div>
         <button>Update my settings</button>
       </div>
-    </form>  </div>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -32,10 +33,10 @@ export default {
   created () {
     if (firebase.auth().currentUser.uid === this.$route.params.uid) {
       let ref = db.collection('users')
-      ref.where('uid', '==', this.$route.params.uid).get()
+      ref.where('uid', '==', this.$route.params.uid).limit(1).get()
         .then(snapshot => {
           let profile = null
-          // TODO: This is basically db.collection('users').where(---).get().first, but super convoluted
+          // TODO: the forEach here seems expensive. Is there a better way to get data from snapshot?
           snapshot.forEach(_profile => {
             if (!profile) {
               profile = _profile.data()
