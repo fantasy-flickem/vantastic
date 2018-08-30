@@ -9,10 +9,10 @@
     <div class="stripe">
       <div class="l-content" v-for='(gameGroup, index) in gameGroups' :key='index'>
         <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-        <div v-for='(game, index) in gameGroup.games' :key='index'>
-          <div>{{ game.homeTeam.name }}</div>
-          <div>{{ game.awayTeam.name }}</div>
-        </div>
+          <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
+            <button class="team" @click="makePick(game, game.homeTeamId)">{{ game.homeTeam.name }}</button>
+            <button class="team" @click="makePick(game, game.awayTeamId)">{{ game.awayTeam.name }}</button>
+          </div>
         <!-- <div v-for='team in teams' :key='team.logoUrl'>
           {{ team.name }}
         </div> -->
@@ -29,6 +29,7 @@
 
 <script>
 import db from '@/firebase/init'
+import firebase from 'firebase'
 import moment from 'moment'
 export default {
   name: 'Week',
@@ -74,6 +75,40 @@ export default {
       }).then(() => {
         this.games = gamesArray
       })
+    },
+    makePick (_game, _teamId) {
+      let gameTeamIds = [
+        _game.homeTeamId,
+        _game.awayTeamId
+      ]
+      if (gameTeamIds.indexOf(_teamId) >= 0) {
+        let currentUserUid = firebase.auth().currentUser.uid
+        let ref = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
+        ref.get()
+          .then(snapshot => {
+            let pick = null
+            snapshot.forEach(doc => {
+              pick = doc.data()
+              pick.id = doc.id
+            })
+            return pick
+          })
+          .then(_pick => {
+            if (_pick) {
+              if (_pick.teamId !== _teamId) {
+                db.collection('picks').doc(_pick.id).update({
+                  teamId: _teamId
+                })
+              }
+            } else {
+              db.collection('picks').add({
+                gameId: _game.id,
+                teamId: _teamId,
+                uid: currentUserUid
+              })
+            }
+          })
+      }
     },
     updateCurrentlyViewedWeek () {
       this.weekNumber = Number(this.$route.params.week_number)
@@ -154,4 +189,8 @@ export default {
 </script>
 
 <style>
+.game {
+  display: flex;
+  justify-content: space-between;
+}
 </style>
