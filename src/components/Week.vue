@@ -18,6 +18,12 @@
         </div> -->
       </div>
     </div>
+    <div class="stripe">
+      <div class="l-footer">
+        <router-link :to="{ name: 'Week', params: { week_number: (weekNumber - 1) } }">Previous Week</router-link>
+        <router-link :to="{ name: 'Week', params: { week_number: (weekNumber + 1) } }">Next Week</router-link>
+      </div>
+    </div>
   </div>
 </template>
 
