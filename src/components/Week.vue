@@ -1,11 +1,21 @@
 <template>
-  <div>
-    <h1>WEEK</h1>
-    <h3>Games</h3>
-    <div v-for='(gameGroup, index) in gameGroups' :key='index'>
-      <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-      <div v-for='game in gameGroup.games' :key='game.id'>
-        <div>{{ game.name }}</div>
+  <div v-if='teams'>
+    <div class="stripe">
+      <div class="l-header">
+        <h1>WEEK {{ weekNumber }}</h1>
+        <h3>Games</h3>
+      </div>
+    </div>
+    <div class="stripe">
+      <div class="l-content" v-for='(gameGroup, index) in gameGroups' :key='index'>
+        <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
+        <div v-for='(game, index) in gameGroup.games' :key='index'>
+          <div>{{ game.homeTeam.name }}</div>
+          <div>{{ game.awayTeam.name }}</div>
+        </div>
+        <!-- <div v-for='team in teams' :key='team.logoUrl'>
+          {{ team.name }}
+        </div> -->
       </div>
     </div>
   </div>
@@ -18,25 +28,49 @@ export default {
   name: 'Week',
   data () {
     return {
+      teams: [],
       games: [],
-      weekNumber: this.$route.params.week_number
+      weekNumber: Number(this.$route.params.week_number)
     }
   },
   methods: {
-    getCurrentlyViewedWeeksGames (_currentlyViewedWeek) {
-      // TODO: Store cache of all gotten week's games, and check if week's games exist before doing .get
-      let ref = db.collection('games').where('week', '==', _currentlyViewedWeek)
+    getAllTeams () {
+      let ref = db.collection('teams')
       ref.get().then(snapshot => {
-        this.games = []
         snapshot.forEach(doc => {
-          let game = doc.data()
-          game.id = doc.id
-          this.games.push(game)
+          let team = doc.data()
+          team.id = doc.id
+          this.teams.push(team)
         })
       })
     },
+    getCurrentlyViewedWeeksGames (_currentlyViewedWeek) {
+      this.games = []
+      // TODO: Store cache of all gotten week's games, and check if week's games exist before doing .get
+      let gamesRef = db.collection('games').where('week', '==', String(_currentlyViewedWeek))
+      let gamesArray = []
+      gamesRef.get().then(snapshot => {
+        snapshot.forEach(doc => {
+          let game = doc.data()
+          game.id = doc.id
+          if (!game.homeTeam && !game.awayTeam) {
+            this.teams.forEach((team) => {
+              if (team.id === game.homeTeamId) {
+                game.homeTeam = team
+              }
+              if (team.id === game.awayTeamId) {
+                game.awayTeam = team
+              }
+            })
+          }
+          gamesArray.push(game)
+        })
+      }).then(() => {
+        this.games = gamesArray
+      })
+    },
     updateCurrentlyViewedWeek () {
-      this.weekNumber = this.$route.params.week_number
+      this.weekNumber = Number(this.$route.params.week_number)
       this.getCurrentlyViewedWeeksGames(this.weekNumber)
     }
   },
@@ -86,8 +120,26 @@ export default {
       return gameGroups
     }
   },
+  beforeCreate () {
+    console.log('beforeCreate is firing')
+  },
   created () {
+    console.log('created is firing')
+    this.getAllTeams()
+    // TODO: this only fires on creation of the component, not on updated data
     this.getCurrentlyViewedWeeksGames(this.weekNumber)
+  },
+  beforeMount () {
+    console.log('beforeMount is firing')
+  },
+  mounted () {
+    console.log('mounted is firing')
+  },
+  beforeUpdate () {
+    console.log('beforeUpdate is firing')
+  },
+  updated () {
+    console.log('updated is firing')
   },
   watch: {
     $route: 'updateCurrentlyViewedWeek'

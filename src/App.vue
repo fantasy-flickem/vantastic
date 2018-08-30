@@ -1,7 +1,6 @@
 <template>
   <div>
     <Navbar />
-    <img src="./assets/logo.png">
     <router-view/>
   </div>
 </template>
