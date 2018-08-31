@@ -50,11 +50,10 @@ export default {
   },
   methods: {
     updateSettings () {
-      if (this.profile.email) {
+      if (this.profile.displayName) {
         this.feedback = null
         db.collection('users').doc(this.profile.id).update({
-          displayName: this.profile.displayName,
-          email: this.profile.email
+          displayName: this.profile.displayName
         }).then(() => {
           // TODO: push user to the current week
           this.$router.push({ name: 'Week', params: { week_number: '1' } })
@@ -62,7 +61,7 @@ export default {
           this.feedback = err.message
         })
       } else {
-        this.feedback = 'Please enter your email address and password you\'d like to register with'
+        this.feedback = 'Please enter the name you would like us to chant leading up to your inevitable victory'
       }
     }
   }
