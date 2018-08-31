@@ -161,26 +161,10 @@ export default {
       return gameGroups
     }
   },
-  beforeCreate () {
-    console.log('beforeCreate is firing')
-  },
   created () {
-    console.log('created is firing')
     this.getAllTeams()
     // TODO: this only fires on creation of the component, not on updated data
     this.getCurrentlyViewedWeeksGames(this.weekNumber)
-  },
-  beforeMount () {
-    console.log('beforeMount is firing')
-  },
-  mounted () {
-    console.log('mounted is firing')
-  },
-  beforeUpdate () {
-    console.log('beforeUpdate is firing')
-  },
-  updated () {
-    console.log('updated is firing')
   },
   watch: {
     $route: 'updateCurrentlyViewedWeek'
