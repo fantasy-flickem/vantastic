@@ -48,9 +48,6 @@ export default {
     }
   },
   methods: {
-    updateId () {
-      this.uid = this.$route.params.uid
-    },
     updateSettings () {
       if (this.profile.email) {
         this.feedback = null
@@ -66,9 +63,6 @@ export default {
         this.feedback = 'Please enter your email address and password you\'d like to register with'
       }
     }
-  },
-  watch: {
-    $route: 'updateId'
   }
 }
 </script>
