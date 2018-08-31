@@ -9,13 +9,14 @@
     <div class="stripe">
       <div class="l-content" v-for='(gameGroup, index) in gameGroups' :key='index'>
         <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-          <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
-            <button class="team" @click="makePick(game, game.homeTeamId)">{{ game.homeTeam.name }}</button>
-            <button class="team" @click="makePick(game, game.awayTeamId)">{{ game.awayTeam.name }}</button>
-          </div>
-        <!-- <div v-for='team in teams' :key='team.logoUrl'>
-          {{ team.name }}
-        </div> -->
+        <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
+          <button class="team" @click="makePick(game, game.homeTeamId)">{{ game.homeTeam.name }}</button>
+          <button class="team" @click="makePick(game, game.awayTeamId)">{{ game.awayTeam.name }}</button>
+        </div>
+        <div v-if='favoriteTeamGame' class="game">
+          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId)">{{ favoriteTeamGame.homeTeam.name }}</button>
+          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId)">{{ favoriteTeamGame.homeTeam.name }}</button>
+        </div>
       </div>
     </div>
     <div class="stripe">
@@ -37,6 +38,7 @@ export default {
     return {
       teams: [],
       games: [],
+      favoriteTeamGame: null,
       weekNumber: Number(this.$route.params.week_number)
     }
   },
