@@ -3,6 +3,10 @@
     <form @submit.prevent="register">
       <h2>Register</h2>
       <div>
+        <label for="display-name">Display name</label>
+        <input id="display-name" v-model="displayName">
+      </div>
+      <div>
         <label for="email">Email</label>
         <input id="email" type="email" v-model="email">
       </div>
@@ -10,6 +14,12 @@
         <label for="password">Password</label>
         <input id="password" type="password" v-model="password">
       </div>
+      <label for="favorite-team-id">Choose your favorite team:</label>
+
+      <select id="favorite-team-id" v-model="favoriteTeamId">
+        <!-- <option value="">--Please choose an option--</option> -->
+        <option v-for='team in teams' :key=team.id :value=team.id>{{ team.name }}</option>
+      </select>
       <p v-if="feedback">{{ feedback }}</p>
       <div>
         <button>Register</button>
@@ -28,12 +38,15 @@ export default {
     return {
       email: null,
       password: null,
-      feedback: null
+      displayName: null,
+      favoriteTeamId: null,
+      feedback: null,
+      teams: []
     }
   },
   methods: {
     register () {
-      if (this.email && this.password) {
+      if (this.email && this.password && this.displayName && this.favoriteTeamId) {
         this.feedback = null
         firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
           .then(credentials => {
@@ -41,8 +54,8 @@ export default {
             db.collection('users').add({
               uid: firebaseAuthUser.uid,
               email: this.email,
-              displayName: null
-              // favoriteTeam: this.favoriteTeam
+              displayName: this.displayName,
+              favoriteTeamId: this.favoriteTeamId
             })
           })
           .then(() => {
@@ -52,9 +65,19 @@ export default {
             this.feedback = err.message
           })
       } else {
-        this.feedback = 'Please enter your email address and password you\'d like to register with'
+        this.feedback = 'Please fill out the form in its entirety so we know who to congratulate'
       }
     }
+  },
+  created () {
+    let ref = db.collection('teams')
+    ref.get().then(snapshot => {
+      snapshot.forEach(doc => {
+        let team = doc.data()
+        team.id = doc.id
+        this.teams.push(team)
+      })
+    })
   }
 }
 </script>

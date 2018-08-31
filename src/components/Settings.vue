@@ -27,6 +27,7 @@ export default {
     return {
       feedback: null,
       profile: null,
+      favoriteTeam: null,
       uid: this.$route.params.uid
     }
   },
