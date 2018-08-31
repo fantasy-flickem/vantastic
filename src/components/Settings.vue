@@ -33,14 +33,15 @@ export default {
   created () {
     if (firebase.auth().currentUser.uid === this.$route.params.uid) {
       let ref = db.collection('users')
+      // TODO: try to store the db user on App, so we can pass the id here and use doc instead of where
       ref.where('uid', '==', this.$route.params.uid).limit(1).get()
         .then(snapshot => {
           let profile = null
           // TODO: the forEach here seems expensive. Is there a better way to get data from snapshot?
-          snapshot.forEach(_profile => {
+          snapshot.forEach(doc => {
             if (!profile) {
-              profile = _profile.data()
-              profile.id = _profile.id
+              profile = doc.data()
+              profile.id = doc.id
               this.profile = profile
             }
           })
@@ -55,6 +56,7 @@ export default {
           displayName: this.profile.displayName,
           email: this.profile.email
         }).then(() => {
+          // TODO: push user to the current week
           this.$router.push({ name: 'Week', params: { week_number: '1' } })
         }).catch((err) => {
           this.feedback = err.message
