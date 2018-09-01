@@ -1,5 +1,5 @@
 <template>
-  <div v-if='teams'>
+  <div>
     <div class="stripe">
       <div class="l-header">
         <h1>WEEK {{ weekNumber }}</h1>
@@ -7,17 +7,21 @@
       </div>
     </div>
     <div class="stripe">
-      <div class="l-content" v-for='(gameGroup, index) in gameGroups' :key='index'>
-        <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-        <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
-          <button class="team" @click="makePick(game, game.homeTeamId)">{{ game.homeTeam.name }}</button>
-          <button class="team" @click="makePick(game, game.awayTeamId)">{{ game.awayTeam.name }}</button>
-        </div>
-        <div v-if='favoriteTeamGame' class="game">
-          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId)">{{ favoriteTeamGame.homeTeam.name }}</button>
-          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId)">{{ favoriteTeamGame.homeTeam.name }}</button>
+      <div class="l-content">
+        <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
+          <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
+          <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
+            <button class="team" @click="makePick(game, game.homeTeamId, false)">{{ game.homeTeam.name }}</button>
+            <button class="team" @click="makePick(game, game.awayTeamId, false)">{{ game.awayTeam.name }}</button>
+          </div>
         </div>
       </div>
+      <!-- <div>
+        <div v-if='favoriteTeamGame' class="game">
+          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId, true)">{{ favoriteTeamGame.homeTeam.name }}</button>
+          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.awayTeamId, true)">{{ favoriteTeamGame.awayTeam.name }}</button>
+        </div>
+      </div> -->
     </div>
     <div class="stripe">
       <div class="l-footer">
@@ -34,25 +38,15 @@ import firebase from 'firebase'
 import moment from 'moment'
 export default {
   name: 'Week',
+  props: [ 'favoriteTeam', 'teams' ],
   data () {
     return {
-      teams: [],
       games: [],
       favoriteTeamGame: null,
       weekNumber: Number(this.$route.params.week_number)
     }
   },
   methods: {
-    getAllTeams () {
-      let ref = db.collection('teams')
-      ref.get().then(snapshot => {
-        snapshot.forEach(doc => {
-          let team = doc.data()
-          team.id = doc.id
-          this.teams.push(team)
-        })
-      })
-    },
     getCurrentlyViewedWeeksGames (_currentlyViewedWeek) {
       this.games = []
       // TODO: Store cache of all gotten week's games, and check if week's games exist before doing .get
@@ -78,7 +72,7 @@ export default {
         this.games = gamesArray
       })
     },
-    makePick (_game, _teamId) {
+    makePick (_game, _teamId, _isFavoriteTeamGamePick) {
       let gameTeamIds = [
         _game.homeTeamId,
         _game.awayTeamId
@@ -164,8 +158,6 @@ export default {
     }
   },
   created () {
-    this.getAllTeams()
-    // TODO: this only fires on creation of the component, not on updated data
     this.getCurrentlyViewedWeeksGames(this.weekNumber)
   },
   watch: {
