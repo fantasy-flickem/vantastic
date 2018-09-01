@@ -1,14 +1,14 @@
 <template>
-  <div v-if='profile'>
+  <div v-if='user'>
     <form @submit.prevent="updateSettings">
-      <h1>SETTINGS for {{ profile.displayName }}</h1>
+      <h1>SETTINGS for {{ user.displayName }}</h1>
       <div>
         <label for="email">Email</label>
-        <input id="email" type="email" v-model="profile.email" disabled>
+        <input id="email" type="email" v-model="user.email" disabled>
       </div>
       <div>
         <label for="displayName">Display name</label>
-        <input id="displayName" type="text" v-model="profile.displayName">
+        <input id="displayName" type="text" v-model="user.displayName">
       </div>
       <p v-if="feedback">{{ feedback }}</p>
       <div>
@@ -19,42 +19,25 @@
 </template>
 
 <script>
-import firebase from 'firebase'
 import db from '@/firebase/init'
 export default {
   name: 'Settings',
+  props: [ 'favoriteTeam', 'user' ],
   data () {
     return {
       feedback: null,
-      profile: null,
-      favoriteTeam: null,
       uid: this.$route.params.uid
     }
   },
-  created () {
-    if (firebase.auth().currentUser.uid === this.$route.params.uid) {
-      let ref = db.collection('users')
-      // TODO: try to store the db user on App, so we can pass the id here and use doc instead of where
-      ref.where('uid', '==', this.$route.params.uid).limit(1).get()
-        .then(snapshot => {
-          let profile = null
-          // TODO: the forEach here seems expensive. Is there a better way to get data from snapshot?
-          snapshot.forEach(doc => {
-            if (!profile) {
-              profile = doc.data()
-              profile.id = doc.id
-              this.profile = profile
-            }
-          })
-        })
-    }
-  },
   methods: {
+    updateUid () {
+      this.uid = this.$route.params.uid
+    },
     updateSettings () {
-      if (this.profile.displayName) {
+      if (this.user.displayName) {
         this.feedback = null
-        db.collection('users').doc(this.profile.id).update({
-          displayName: this.profile.displayName
+        db.collection('users').doc(this.user.id).update({
+          displayName: this.user.displayName
         }).then(() => {
           // TODO: push user to the current week
           this.$router.push({ name: 'Week', params: { week_number: '1' } })
@@ -65,6 +48,9 @@ export default {
         this.feedback = 'Please enter the name you would like us to chant leading up to your inevitable victory'
       }
     }
+  },
+  watch: {
+    $route: 'updateUid'
   }
 }
 </script>

@@ -1,10 +1,10 @@
 <template>
-  <div v-if='user'>
+  <div v-if='authUser'>
     <button @click='goBack()'>Back</button>
     <ul>
       <li><router-link :to="{ name: 'Week', params: { week_number: currentlyViewedWeek } }">Week</router-link></li>
       <li><router-link :to="{ name: 'Leaderboard' }">Leaderboard</router-link></li>
-      <li><router-link :to="{ name: 'Settings', params: { uid: user.uid } }">Settings</router-link></li>
+      <li><router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }">Settings</router-link></li>
     </ul>
     <button @click='logout()'>Logout</button>
   </div>
@@ -22,7 +22,7 @@ export default {
     return {
       currentWeek: '1',
       currentlyViewedWeek: '2',
-      user: null
+      authUser: null
     }
   },
   methods: {
@@ -31,16 +31,17 @@ export default {
     },
     logout () {
       firebase.auth().signOut().then(() => {
+        this.$emit('log-user-out')
         this.$router.push({ name: 'Landing' })
       })
     }
   },
   created () {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.user = user
+    firebase.auth().onAuthStateChanged((authUser) => {
+      if (authUser) {
+        this.authUser = authUser
       } else {
-        this.user = null
+        this.authUser = null
       }
     })
   }

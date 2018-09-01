@@ -36,6 +36,8 @@ export default {
         this.feedback = null
         firebase.auth().signInWithEmailAndPassword(this.email, this.password)
           .then(() => {
+            console.log('signin is firing')
+            this.$emit('log-user-in')
             this.$router.push({ name: 'Week', params: { week_number: '1' } })
           })
           .catch(err => {

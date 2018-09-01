@@ -17,7 +17,7 @@
       <label for="favorite-team-id">Choose your favorite team:</label>
 
       <select id="favorite-team-id" v-model="favoriteTeamId">
-        <!-- <option value="">--Please choose an option--</option> -->
+        <option value="">--Please choose an option--</option>
         <option v-for='team in teams' :key=team.id :value=team.id>{{ team.name }}</option>
       </select>
       <p v-if="feedback">{{ feedback }}</p>
@@ -34,14 +34,14 @@ import firebase from 'firebase'
 
 export default {
   name: 'Register',
+  props: [ 'teams' ],
   data () {
     return {
       email: null,
       password: null,
       displayName: null,
       favoriteTeamId: null,
-      feedback: null,
-      teams: []
+      feedback: null
     }
   },
   methods: {
@@ -68,16 +68,6 @@ export default {
         this.feedback = 'Please fill out the form in its entirety so we know who to congratulate'
       }
     }
-  },
-  created () {
-    let ref = db.collection('teams')
-    ref.get().then(snapshot => {
-      snapshot.forEach(doc => {
-        let team = doc.data()
-        team.id = doc.id
-        this.teams.push(team)
-      })
-    })
   }
 }
 </script>
