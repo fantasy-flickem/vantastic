@@ -34,8 +34,10 @@
 <script>
 import db from '@/firebase/init'
 import moment from 'moment'
+import Game from './Game'
 export default {
   name: 'Week',
+  components: {Game},
   props: [ 'user' ],
   data () {
     return {
