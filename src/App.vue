@@ -1,6 +1,7 @@
 <template>
   <div>
     <Navbar />
+    <router-view :user=this.user />
   </div>
 </template>
 
@@ -24,8 +25,6 @@ export default {
   },
   data () {
     return {
-      favoriteTeam: null,
-      teams: null,
       user: null
     }
   },
@@ -33,11 +32,10 @@ export default {
     let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid).limit(1)
     userRef.get().then(snapshot => {
       snapshot.forEach(doc => {
-        let team = doc.data()
-        team.id = doc.id
-        teams.push(team)
+        let profile = doc.data()
+        profile.id = doc.id
+        this.user = profile
       })
-      this.teams = teams
     })
   }
 }
