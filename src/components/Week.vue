@@ -160,9 +160,13 @@ export default {
   created () {
     this.getCurrentlyViewedWeeksGames(this.weekNumber)
   },
-  watch: {
-    $route: 'updateCurrentlyViewedWeek'
+  beforeRouteUpdate (to, from, next) {
+    this.fetchData(Number(this.$route.params.week_number))
+    next()
   }
+  // watch: {
+  //   $route: 'updateCurrentlyViewedWeek'
+  // }
 }
 </script>
 
