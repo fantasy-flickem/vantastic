@@ -2,17 +2,16 @@
   <div>
     <div class="stripe">
       <div class="l-header">
-        <h1>WEEK {{ weekNumber }}</h1>
+        <h1>WEEK {{ currentWeekNumber }}</h1>
         <h3>Games</h3>
       </div>
     </div>
     <div class="stripe">
       <div class="l-content">
-        <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
-          <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-          <div v-for='(game, index) in gameGroup.games' :key='index' class="game">
-            <button class="team" @click="makePick(game, game.homeTeamId, false)">{{ game.homeTeam.name }}</button>
-            <button class="team" @click="makePick(game, game.awayTeamId, false)">{{ game.awayTeam.name }}</button>
+        <div v-if='gameGroups.length > 0'>
+          <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
+            <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
+            <!-- <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game class="game"></Game> -->
           </div>
         </div>
       </div>
@@ -25,8 +24,8 @@
     </div>
     <div class="stripe">
       <div class="l-footer">
-        <router-link :to="{ name: 'Week', params: { week_number: (weekNumber - 1) } }">Previous Week</router-link>
-        <router-link :to="{ name: 'Week', params: { week_number: (weekNumber + 1) } }">Next Week</router-link>
+        <router-link :to="{ name: 'Week', params: { week_number: (currentWeekNumber - 1) } }">Previous Week</router-link>
+        <router-link :to="{ name: 'Week', params: { week_number: (currentWeekNumber + 1) } }">Next Week</router-link>
       </div>
     </div>
   </div>
@@ -34,131 +33,116 @@
 
 <script>
 import db from '@/firebase/init'
-import firebase from 'firebase'
 import moment from 'moment'
 export default {
   name: 'Week',
-  props: [ 'favoriteTeam', 'teams' ],
+  props: [ 'user' ],
   data () {
     return {
-      games: [],
+      thisWeeksGames: [],
+      gameGroups: [],
       favoriteTeamGame: null,
-      weekNumber: Number(this.$route.params.week_number)
+      currentWeekNumber: Number(this.$route.params.week_number)
     }
   },
   methods: {
-    getCurrentlyViewedWeeksGames (_currentlyViewedWeek) {
-      this.games = []
-      // TODO: Store cache of all gotten week's games, and check if week's games exist before doing .get
-      let gamesRef = db.collection('games').where('week', '==', String(_currentlyViewedWeek))
-      let gamesArray = []
-      gamesRef.get().then(snapshot => {
+    fetchData (_currentlyViewedWeek) {
+      this.currentWeekNumber = _currentlyViewedWeek
+      console.log('fetchData is firing', this.user)
+      let teamsRef = db.collection('teams')
+      let gamesRef = db.collection('games')
+      let teams = []
+      let games = []
+      teamsRef.get().then(snapshot => {
         snapshot.forEach(doc => {
-          let game = doc.data()
-          game.id = doc.id
-          if (!game.homeTeam && !game.awayTeam) {
-            this.teams.forEach((team) => {
-              if (team.id === game.homeTeamId) {
-                game.homeTeam = team
-              }
-              if (team.id === game.awayTeamId) {
-                game.awayTeam = team
-              }
-            })
-          }
-          gamesArray.push(game)
+          let team = doc.data()
+          team.id = doc.id
+          teams.push(team)
         })
+        this.teams = teams
       }).then(() => {
-        this.games = gamesArray
-      })
-    },
-    makePick (_game, _teamId, _isFavoriteTeamGamePick) {
-      let gameTeamIds = [
-        _game.homeTeamId,
-        _game.awayTeamId
-      ]
-      if (gameTeamIds.indexOf(_teamId) >= 0) {
-        let currentUserUid = firebase.auth().currentUser.uid
-        let ref = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
-        ref.get()
-          .then(snapshot => {
-            let pick = null
-            snapshot.forEach(doc => {
-              pick = doc.data()
-              pick.id = doc.id
-            })
-            return pick
-          })
-          .then(_pick => {
-            if (_pick) {
-              if (_pick.teamId !== _teamId) {
-                db.collection('picks').doc(_pick.id).update({
-                  teamId: _teamId
-                })
-              }
-            } else {
-              db.collection('picks').add({
-                gameId: _game.id,
-                teamId: _teamId,
-                uid: currentUserUid
+        gamesRef.get().then(snapshot => {
+          snapshot.forEach(doc => {
+            let game = doc.data()
+            game.id = doc.id
+            if (!game.homeTeam && !game.awayTeam) {
+              this.teams.forEach((team) => {
+                if (team.id === game.homeTeamId) {
+                  game.homeTeam = team
+                }
+                if (team.id === game.awayTeamId) {
+                  game.awayTeam = team
+                }
               })
             }
+            games.push(game)
           })
-      }
-    },
-    updateCurrentlyViewedWeek () {
-      this.weekNumber = Number(this.$route.params.week_number)
-      this.getCurrentlyViewedWeeksGames(this.weekNumber)
-    }
-  },
-  computed: {
-    gameGroups () {
-      let createGameGroupObject = (_gameGroupName, _gamesArray) => {
-        let gameGroupObject = { name: _gameGroupName + ' games' }
-        _gamesArray.length > 0 ? gameGroupObject.games = _gamesArray : gameGroupObject.games = null
-        return gameGroupObject
-      }
-      let thursdayGames = []
-      let saturdayGames = []
-      let sundayEarlyGames = []
-      let sundayLateGames = []
-      let mondayGames = []
-      // TODO How often does the computed property run (and do a forEach on all games for the day)?
-      this.games.forEach(game => {
-        let startTime = game.startTime.seconds * 1000
-        let gameDay = moment(startTime).format('dddd')
-        switch (gameDay) {
-          case 'Thursday':
-            thursdayGames.push(game)
-            break
-          case 'Saturday':
-            saturdayGames.push(game)
-            break
-          case 'Sunday':
-            if (Number(moment(startTime).format('kk')) < 14) {
-              sundayEarlyGames.push(game)
-            } else {
-              sundayLateGames.push(game)
+          this.games = games
+        }).then(() => {
+          let createGameGroupObject = (_gameGroupName, _gamesArray) => {
+            if (_gamesArray.length > 0) {
+              let gameGroupObject = { name: _gameGroupName + ' games' }
+              gameGroupObject.games = _gamesArray
+              return gameGroupObject
             }
-            break
-          case 'Monday':
-            mondayGames.push(game)
-            break
-          default:
-            break
-        }
+          }
+          let thursdayGames = []
+          let saturdayGames = []
+          let sundayEarlyGames = []
+          let sundayLateGames = []
+          let mondayGames = []
+          // TODO How often does the computed property run (and do a forEach on all games for the day)?
+          this.games.forEach(game => {
+            if (game.id === this.user.favoriteTeamId) {
+              this.favoriteTeamGame = game
+            }
+            let startTime = game.startTime.seconds * 1000
+            let gameDay = moment(startTime).format('dddd')
+            switch (gameDay) {
+              case 'Thursday':
+                thursdayGames.push(game)
+                break
+              case 'Saturday':
+                saturdayGames.push(game)
+                break
+              case 'Sunday':
+                if (Number(moment(startTime).format('kk')) < 14) {
+                  sundayEarlyGames.push(game)
+                } else {
+                  sundayLateGames.push(game)
+                }
+                break
+              case 'Monday':
+                mondayGames.push(game)
+                break
+              default:
+                break
+            }
+          })
+          let gameGroups = []
+          thursdayGames.length > 0
+            ? gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
+            : console.log('There are no thursdayGames')
+          saturdayGames.length > 0
+            ? gameGroups.push(createGameGroupObject('Saturday', saturdayGames))
+            : console.log('There are no saturdayGames')
+          sundayEarlyGames.length > 0
+            ? gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames))
+            : console.log('There are no sundayEarlyGames')
+          sundayLateGames.length > 0
+            ? gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames))
+            : console.log('There are no sundayLateGames')
+          mondayGames.length > 0
+            ? gameGroups.push(createGameGroupObject('Monday', mondayGames))
+            : console.log('There are no mondayGames')
+          this.gameGroups = gameGroups
+          console.log('fetchData is done fetching', this.gameGroups)
+        })
       })
-      let gameGroups = []
-      gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
-      gameGroups.push(createGameGroupObject('Saturday', saturdayGames))
-      gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames))
-      gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames))
-      gameGroups.push(createGameGroupObject('Monday', mondayGames))
-      return gameGroups
     }
   },
   created () {
-    this.getCurrentlyViewedWeeksGames(this.weekNumber)
+    this.fetchData(Number(this.$route.params.week_number))
   },
   beforeRouteUpdate (to, from, next) {
     this.fetchData(Number(this.$route.params.week_number))
