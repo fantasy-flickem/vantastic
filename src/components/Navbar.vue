@@ -2,7 +2,7 @@
   <div v-if='authUser'>
     <button @click='goBack()'>Back</button>
     <ul>
-      <li><router-link :to="{ name: 'Week', params: { week_number: currentlyViewedWeek } }">Week</router-link></li>
+      <li><router-link :to="{ name: 'Week', params: { week_number: currentWeekNumber } }">Week</router-link></li>
       <li><router-link :to="{ name: 'Leaderboard' }">Leaderboard</router-link></li>
       <li><router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }">Settings</router-link></li>
     </ul>
@@ -21,7 +21,7 @@ export default {
   data () {
     return {
       currentWeek: '1',
-      currentlyViewedWeek: '2',
+      currentWeekNumber: '2',
       authUser: null
     }
   },
