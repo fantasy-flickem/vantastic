@@ -87,8 +87,10 @@ export default {
           let sundayEarlyGames = []
           let sundayLateGames = []
           let mondayGames = []
+          let favoriteTeamIsPlayingThisWeek = false
           this.games.forEach(game => {
             if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
+              favoriteTeamIsPlayingThisWeek = true
               this.favoriteTeamGame = game
             }
             let startTime = game.startTime.seconds * 1000
@@ -114,6 +116,9 @@ export default {
                 break
             }
           })
+          if (!favoriteTeamIsPlayingThisWeek) {
+            this.favoriteTeamGame = null
+          }
           let gameGroups = []
           thursdayGames.length > 0
             ? gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
