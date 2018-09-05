@@ -15,12 +15,6 @@
           </div>
         </div>
       </div>
-      <!-- <div>
-        <div v-if='favoriteTeamGame' class="game">
-          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.homeTeamId, true)">{{ favoriteTeamGame.homeTeam.name }}</button>
-          <button class="team" @click="makePick(favoriteTeamGame, favoriteTeamGame.awayTeamId, true)">{{ favoriteTeamGame.awayTeam.name }}</button>
-        </div>
-      </div> -->
     </div>
     <div class="stripe">
       <div class="l-footer">
@@ -52,7 +46,7 @@ export default {
       this.currentWeekNumber = _currentlyViewedWeek
       console.log('fetchData is firing', this.user)
       let teamsRef = db.collection('teams')
-      let gamesRef = db.collection('games')
+      let gamesRef = db.collection('games').where('week', '==', String(_currentlyViewedWeek))
       let teams = []
       let games = []
       teamsRef.get().then(snapshot => {
@@ -93,9 +87,8 @@ export default {
           let sundayEarlyGames = []
           let sundayLateGames = []
           let mondayGames = []
-          // TODO How often does the computed property run (and do a forEach on all games for the day)?
           this.games.forEach(game => {
-            if (game.id === this.user.favoriteTeamId) {
+            if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
               this.favoriteTeamGame = game
             }
             let startTime = game.startTime.seconds * 1000
@@ -137,6 +130,9 @@ export default {
           mondayGames.length > 0
             ? gameGroups.push(createGameGroupObject('Monday', mondayGames))
             : console.log('There are no mondayGames')
+          if (this.favoriteTeamGame) {
+            gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]})
+          }
           this.gameGroups = gameGroups
           console.log('fetchData is done fetching', this.gameGroups)
         })
