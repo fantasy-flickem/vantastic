@@ -18,8 +18,8 @@
     </div>
     <div class="stripe">
       <div class="l-footer">
-        <router-link :to="{ name: 'Week', params: { week_number: (currentWeekNumber - 1) } }">Previous Week</router-link>
-        <router-link :to="{ name: 'Week', params: { week_number: (currentWeekNumber + 1) } }">Next Week</router-link>
+        <router-link :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
+        <router-link :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
       </div>
     </div>
   </div>
@@ -38,13 +38,13 @@ export default {
       thisWeeksGames: [],
       gameGroups: [],
       favoriteTeamGame: null,
-      currentWeekNumber: Number(this.$route.params.week_number)
+      currentWeekNumber: null
     }
   },
   methods: {
     fetchData (_currentlyViewedWeek) {
       this.currentWeekNumber = _currentlyViewedWeek
-      console.log('fetchData is firing', this.user)
+      console.log('fetchData is firing')
       let teamsRef = db.collection('teams')
       let gamesRef = db.collection('games').where('week', '==', String(_currentlyViewedWeek))
       let teams = []
@@ -137,18 +137,21 @@ export default {
           console.log('fetchData is done fetching', this.gameGroups)
         })
       })
+    },
+    decrementWeekNumber () {
+      return Number(this.$route.params.week_number) - 1
+    },
+    incrementWeekNumber () {
+      return Number(this.$route.params.week_number) + 1
     }
   },
   created () {
     this.fetchData(Number(this.$route.params.week_number))
   },
   beforeRouteUpdate (to, from, next) {
-    this.fetchData(Number(this.$route.params.week_number))
+    this.fetchData(to.params.week_number)
     next()
   }
-  // watch: {
-  //   $route: 'updateCurrentlyViewedWeek'
-  // }
 }
 </script>
 
