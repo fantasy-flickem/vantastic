@@ -11,7 +11,7 @@
         <div v-if='gameGroups.length > 0'>
           <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
             <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-            <!-- <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game class="game"></Game> -->
+            <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game class="game"></Game>
           </div>
         </div>
       </div>
