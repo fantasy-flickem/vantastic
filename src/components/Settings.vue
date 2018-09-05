@@ -2,6 +2,7 @@
   <div v-if='user'>
     <form @submit.prevent="updateSettings">
       <h1>SETTINGS for {{ user.displayName }}</h1>
+      <div v-if='this.favoriteTeam'>Your favorite team is {{ this.favoriteTeam.name }}</div>
       <div>
         <label for="email">Email</label>
         <input id="email" type="email" v-model="user.email" disabled>
@@ -22,11 +23,12 @@
 import db from '@/firebase/init'
 export default {
   name: 'Settings',
-  props: [ 'favoriteTeam', 'user' ],
+  props: [ 'user' ],
   data () {
     return {
       feedback: null,
-      uid: this.$route.params.uid
+      uid: this.$route.params.uid,
+      favoriteTeam: null
     }
   },
   methods: {
@@ -48,6 +50,14 @@ export default {
         this.feedback = 'Please enter the name you would like us to chant leading up to your inevitable victory'
       }
     }
+  },
+  created () {
+    let favoriteTeamRef = db.collection('teams').doc(this.user.favoriteTeamId)
+    favoriteTeamRef.get().then(doc => {
+      let favoriteTeam = doc.data()
+      favoriteTeam.id = doc.id
+      this.favoriteTeam = favoriteTeam
+    })
   },
   watch: {
     $route: 'updateUid'
