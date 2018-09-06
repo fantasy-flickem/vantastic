@@ -43,10 +43,9 @@ export default {
   },
   methods: {
     fetchData (_currentlyViewedWeek) {
-      this.currentWeekNumber = _currentlyViewedWeek
-      console.log('fetchData is firing')
+      this.currentWeekNumber = Number(_currentlyViewedWeek)
       let teamsRef = db.collection('teams')
-      let gamesRef = db.collection('games').where('week', '==', String(_currentlyViewedWeek))
+      let gamesRef = db.collection('games').where('week', '==', _currentlyViewedWeek)
       let teams = []
       let games = []
       teamsRef.get().then(snapshot => {

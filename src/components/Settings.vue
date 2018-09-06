@@ -42,7 +42,7 @@ export default {
           displayName: this.user.displayName
         }).then(() => {
           // TODO: push user to the current week
-          this.$router.push({ name: 'Week', params: { week_number: '1' } })
+          this.$router.push({ name: 'Week', params: { week_number: 1 } })
         }).catch((err) => {
           this.feedback = err.message
         })

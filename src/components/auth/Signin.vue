@@ -36,7 +36,7 @@ export default {
         this.feedback = null
         firebase.auth().signInWithEmailAndPassword(this.email, this.password)
           .then(() => {
-            this.$router.push({ name: 'Week', params: { week_number: '1' } })
+            this.$router.push({ name: 'Week', params: { week_number: 1 } })
           })
           .catch(err => {
             this.feedback = err.message
