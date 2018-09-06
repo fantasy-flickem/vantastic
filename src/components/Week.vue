@@ -119,26 +119,25 @@ export default {
             this.favoriteTeamGame = null
           }
           let gameGroups = []
-          thursdayGames.length > 0
-            ? gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
-            : console.log('There are no thursdayGames')
-          saturdayGames.length > 0
-            ? gameGroups.push(createGameGroupObject('Saturday', saturdayGames))
-            : console.log('There are no saturdayGames')
-          sundayEarlyGames.length > 0
-            ? gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames))
-            : console.log('There are no sundayEarlyGames')
-          sundayLateGames.length > 0
-            ? gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames))
-            : console.log('There are no sundayLateGames')
-          mondayGames.length > 0
-            ? gameGroups.push(createGameGroupObject('Monday', mondayGames))
-            : console.log('There are no mondayGames')
+          if (thursdayGames.length > 0) {
+            gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
+          }
+          if (saturdayGames.length > 0) {
+            gameGroups.push(createGameGroupObject('Saturday', saturdayGames))
+          }
+          if (sundayEarlyGames.length > 0) {
+            gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames))
+          }
+          if (sundayLateGames.length > 0) {
+            gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames))
+          }
+          if (mondayGames.length > 0) {
+            gameGroups.push(createGameGroupObject('Monday', mondayGames))
+          }
           if (this.favoriteTeamGame) {
             gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]})
           }
           this.gameGroups = gameGroups
-          console.log('fetchData is done fetching', this.gameGroups)
         })
       })
     },

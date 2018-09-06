@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>Here's a game</div>
     <button class="team" @click="makePick(game, game.homeTeamId, false)">{{ game.homeTeam.name }}</button>
     <button class="team" @click="makePick(game, game.awayTeamId, false)">{{ game.awayTeam.name }}</button>
   </div>
