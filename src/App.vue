@@ -2,6 +2,7 @@
   <div>
     <Navbar />
     <router-view :user=this.user />
+    <!-- <router-view :v-if="this.user" :user=this.user :currentWeekNumber=this.currentWeekNumber /> -->
   </div>
 </template>
 
@@ -29,14 +30,16 @@ export default {
     }
   },
   beforeCreate () {
-    let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid).limit(1)
-    userRef.get().then(snapshot => {
-      snapshot.forEach(doc => {
-        let profile = doc.data()
-        profile.id = doc.id
-        this.user = profile
+    if (firebase.auth().currentUser) {
+      let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid).limit(1)
+      userRef.get().then(snapshot => {
+        snapshot.forEach(doc => {
+          let profile = doc.data()
+          profile.id = doc.id
+          this.user = profile
+        })
       })
-    })
+    }
   }
 }
 </script>
