@@ -1,7 +1,7 @@
 <template>
   <div>
-    <button class="team" @click="makePick(game, game.homeTeamId, false)">{{ game.homeTeam.name }}</button>
-    <button class="team" @click="makePick(game, game.awayTeamId, false)">{{ game.awayTeam.name }}</button>
+    <button class="team" @click="makePick(game, game.homeTeamId, gameGroupName)">{{ game.homeTeam.name }}</button>
+    <button class="team" @click="makePick(game, game.awayTeamId, gameGroupName)">{{ game.awayTeam.name }}</button>
   </div>
 </template>
 
@@ -10,33 +10,34 @@ import db from '@/firebase/init'
 import firebase from 'firebase'
 export default {
   name: 'Game',
-  props: ['game'],
+  props: [ 'game', 'gameGroupName', 'user' ],
   data () {
     return {
     }
   },
   methods: {
-    makePick (_game, _teamId, _isFavoriteTeamGamePick) {
+    makePick (_game, _teamId) {
       let gameTeamIds = [
         _game.homeTeamId,
         _game.awayTeamId
       ]
+      let isFavoriteTeamGame = this.gameGroupName === 'Favorite team game'
       if (gameTeamIds.indexOf(_teamId) >= 0) {
         let currentUserUid = firebase.auth().currentUser.uid
-        let ref = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
-        ref.get()
+        let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
+        if (isFavoriteTeamGame) {
+          picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
+        }
+        picksRef.get()
           .then(snapshot => {
             let pick = null
             snapshot.forEach(doc => {
               pick = doc.data()
               pick.id = doc.id
             })
-            return pick
-          })
-          .then(_pick => {
-            if (_pick) {
-              if (_pick.teamId !== _teamId) {
-                db.collection('picks').doc(_pick.id).update({
+            if (pick) {
+              if (pick.teamId !== _teamId) {
+                db.collection('picks').doc(pick.id).update({
                   teamId: _teamId
                 })
               }
@@ -44,7 +45,8 @@ export default {
               db.collection('picks').add({
                 gameId: _game.id,
                 teamId: _teamId,
-                uid: currentUserUid
+                uid: currentUserUid,
+                isFavoriteTeamGame: isFavoriteTeamGame
               })
             }
           })

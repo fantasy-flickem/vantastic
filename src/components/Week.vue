@@ -11,7 +11,7 @@
         <div v-if='gameGroups.length > 0'>
           <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
             <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-            <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game class="game"></Game>
+            <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name class="game"></Game>
           </div>
         </div>
       </div>
@@ -31,7 +31,7 @@ import moment from 'moment'
 import Game from './Game'
 export default {
   name: 'Week',
-  components: {Game},
+  components: { Game },
   props: [ 'user' ],
   data () {
     return {
@@ -88,6 +88,8 @@ export default {
           let mondayGames = []
           let favoriteTeamIsPlayingThisWeek = false
           this.games.forEach(game => {
+            // TODO-async: Because this.user is a prop coming from App, and it's async,
+            //             It's not possible for the user will encounter this line before this.user is populated
             if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
               favoriteTeamIsPlayingThisWeek = true
               this.favoriteTeamGame = game
