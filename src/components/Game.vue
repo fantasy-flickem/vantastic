@@ -24,12 +24,8 @@ export default {
   },
   methods: {
     makePick (_game, _teamId) {
-      let gameTeamIds = [
-        _game.homeTeamId,
-        _game.awayTeamId
-      ]
       let isFavoriteTeamGame = this.gameGroupName === 'Favorite team game'
-      if (gameTeamIds.indexOf(_teamId) >= 0) {
+      if (!this.gameStartTimeHasPassed) {
         let currentUserUid = firebase.auth().currentUser.uid
         let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
         if (isFavoriteTeamGame) {
