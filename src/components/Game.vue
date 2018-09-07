@@ -1,18 +1,25 @@
 <template>
   <div>
-    <button class="team" @click="makePick(game, game.homeTeamId, gameGroupName)">{{ game.homeTeam.name }}</button>
-    <button class="team" @click="makePick(game, game.awayTeamId, gameGroupName)">{{ game.awayTeam.name }}</button>
+    <button class="team" :disabled=gameStartTimeHasPassed @click="makePick(game, game.homeTeamId, gameGroupName)">{{ game.homeTeam.name }}</button>
+    <button class="team" :disabled=gameStartTimeHasPassed @click="makePick(game, game.awayTeamId, gameGroupName)">{{ game.awayTeam.name }}</button>
   </div>
 </template>
 
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
+import moment from 'moment'
 export default {
   name: 'Game',
   props: [ 'game', 'gameGroupName', 'user' ],
   data () {
-    return {
+    return { }
+  },
+  computed: {
+    gameStartTimeHasPassed () {
+      let gameStartTime = moment(this.game.startTime.seconds * 1000)
+      let now = moment()
+      return gameStartTime.diff(now) < 0
     }
   },
   methods: {
