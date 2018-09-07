@@ -2,7 +2,8 @@
   <div v-if='user'>
     <form @submit.prevent="updateSettings">
       <h1>SETTINGS for {{ user.displayName }}</h1>
-      <div v-if='this.favoriteTeam'>Your favorite team is {{ this.favoriteTeam.name }}</div>
+      <div v-if='this.user.favoriteTeamId'>Your favorite team is {{ this.user.favoriteTeamId }}</div>
+      <div v-if='this.user.tribeId'>You belong to {{ this.user.tribeId }}</div>
       <div>
         <label for="email">Email</label>
         <input id="email" type="email" v-model="user.email" disabled>
@@ -27,14 +28,10 @@ export default {
   data () {
     return {
       feedback: null,
-      uid: this.$route.params.uid,
       favoriteTeam: null
     }
   },
   methods: {
-    updateUid () {
-      this.uid = this.$route.params.uid
-    },
     updateSettings () {
       if (this.user.displayName) {
         this.feedback = null
@@ -52,15 +49,6 @@ export default {
     }
   },
   created () {
-    let favoriteTeamRef = db.collection('teams').doc(this.user.favoriteTeamId)
-    favoriteTeamRef.get().then(doc => {
-      let favoriteTeam = doc.data()
-      favoriteTeam.id = doc.id
-      this.favoriteTeam = favoriteTeam
-    })
-  },
-  watch: {
-    $route: 'updateUid'
   }
 }
 </script>

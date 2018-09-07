@@ -29,17 +29,25 @@ export default {
       user: null
     }
   },
-  beforeCreate () {
-    if (firebase.auth().currentUser) {
-      let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid).limit(1)
-      userRef.get().then(snapshot => {
-        snapshot.forEach(doc => {
-          let profile = doc.data()
-          profile.id = doc.id
-          this.user = profile
+  methods: {
+    getCurrentDbUser () {
+      if (firebase.auth().currentUser) {
+        let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid).limit(1)
+        userRef.get().then(snapshot => {
+          snapshot.forEach(doc => {
+            let profile = doc.data()
+            profile.id = doc.id
+            this.user = profile
+          })
         })
-      })
+      }
     }
+  },
+  created () {
+    this.getCurrentDbUser()
+  },
+  updated () {
+    this.getCurrentDbUser()
   }
 }
 </script>
