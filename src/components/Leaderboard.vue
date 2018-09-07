@@ -3,7 +3,7 @@
     <h1>LEADERBOARD</h1>
     <div v-if='tribeUsersArray.length > 0'>
       <div v-for='(tribeUser, index) in tribeUsersArray' :key='index'>
-        <Competitor :tribeUser=tribeUser></Competitor>
+        <Competitor :competitor=tribeUser></Competitor>
       </div>
     </div>
   </div>
