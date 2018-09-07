@@ -62,12 +62,8 @@ export default {
             game.id = doc.id
             if (!game.homeTeam && !game.awayTeam) {
               this.teams.forEach((team) => {
-                if (team.id === game.homeTeamId) {
-                  game.homeTeam = team
-                }
-                if (team.id === game.awayTeamId) {
-                  game.awayTeam = team
-                }
+                if (team.id === game.homeTeamId) { game.homeTeam = team }
+                if (team.id === game.awayTeamId) { game.awayTeam = team }
               })
             }
             games.push(game)
@@ -121,24 +117,12 @@ export default {
             this.favoriteTeamGame = null
           }
           let gameGroups = []
-          if (thursdayGames.length > 0) {
-            gameGroups.push(createGameGroupObject('Thursday', thursdayGames))
-          }
-          if (saturdayGames.length > 0) {
-            gameGroups.push(createGameGroupObject('Saturday', saturdayGames))
-          }
-          if (sundayEarlyGames.length > 0) {
-            gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames))
-          }
-          if (sundayLateGames.length > 0) {
-            gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames))
-          }
-          if (mondayGames.length > 0) {
-            gameGroups.push(createGameGroupObject('Monday', mondayGames))
-          }
-          if (this.favoriteTeamGame) {
-            gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]})
-          }
+          if (thursdayGames.length > 0) { gameGroups.push(createGameGroupObject('Thursday', thursdayGames)) }
+          if (saturdayGames.length > 0) { gameGroups.push(createGameGroupObject('Saturday', saturdayGames)) }
+          if (sundayEarlyGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames)) }
+          if (sundayLateGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames)) }
+          if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
+          if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
           this.gameGroups = gameGroups
         })
       })
