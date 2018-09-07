@@ -18,8 +18,8 @@
     </div>
     <div class="stripe">
       <div class="l-footer">
-        <router-link :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
-        <router-link :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
+        <router-link v-if='currentWeekNumber > 1' :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
+        <router-link v-if='currentWeekNumber < 17' :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
       </div>
     </div>
   </div>
