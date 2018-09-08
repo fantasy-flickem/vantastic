@@ -39,7 +39,7 @@ export default {
         console.log('this.user has now been set to', profile)
         return profile
       }).then(_profile => {
-        let tribeUsersRef = db.collection('users').where('tribeId', '==', this.currentDbUser.tribeId)
+        let tribeUsersRef = db.collection('users').where('tribeId', '==', this.currentDbUser.tribeId).orderBy('score', 'desc')
         tribeUsersRef.get().then(snapshot => {
           let tribeUsersArray = []
           snapshot.forEach(doc => {
@@ -63,7 +63,7 @@ export default {
     } else {
       console.log('It looks like you\'ve arrived here via in-app navigation')
       console.log('this.user is currently set to', this.user)
-      let tribeUsersRef = db.collection('users').where('tribeId', '==', this.user.tribeId)
+      let tribeUsersRef = db.collection('users').where('tribeId', '==', this.user.tribeId).orderBy('score', 'desc')
       tribeUsersRef.get().then(snapshot => {
         let tribeUsersArray = []
         snapshot.forEach(doc => {
