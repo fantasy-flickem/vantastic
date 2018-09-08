@@ -52,5 +52,6 @@ export default {
 </script>
 
 <style lang="scss">
+  @import 'src/assets/stylesheets/_variables.scss';
   @import 'src/assets/stylesheets/lib/_normalize.scss';
 </style>

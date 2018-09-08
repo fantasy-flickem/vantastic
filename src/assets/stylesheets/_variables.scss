@@ -1,0 +1,79 @@
+/**
+ * FONTS
+
+ *
+ */
+@font-face {
+  font-family: 'League Gothic';
+  src: url('assets/fonts/leaguegothic-regular-webfont.eot');
+  src: url('assets/fonts/leaguegothic-regular-webfont.eot?#iefix') format('embedded-opentype'),
+     url('assets/fonts/leaguegothic-regular-webfont.woff') format('woff'),
+     url('assets/fonts/leaguegothic-regular-webfont.ttf') format('truetype'),
+     url('assets/fonts/leaguegothic-regular-webfont.svg#league_gothicregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Junction';
+  src: url('assets/fonts/junction-bold.eot');
+  src: url('assets/fonts/junction-bold.eot?#iefix') format('embedded-opentype'),
+     url('assets/fonts/junction-bold.woff') format('woff'),
+     url('assets/fonts/junction-bold.ttf') format('truetype'),
+     url('assets/fonts/junction-bold.svg#junctionbold') format('svg');
+  font-weight: bold;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Junction';
+  src: url('assets/fonts/junction-light.eot');
+  src: url('assets/fonts/junction-light.eot?#iefix') format('embedded-opentype'),
+     url('assets/fonts/junction-light.woff') format('woff'),
+     url('assets/fonts/junction-light.ttf') format('truetype'),
+     url('assets/fonts/junction-light.svg#junctionlight') format('svg');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Junction';
+  src: url('assets/fonts/junction-regular.eot');
+  src: url('assets/fonts/junction-regular.eot?#iefix') format('embedded-opentype'),
+     url('assets/fonts/junction-regular.woff') format('woff'),
+     url('assets/fonts/junction-regular.ttf') format('truetype'),
+     url('assets/fonts/junction-regular.svg#junctionregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+ 
+$font-junction:       'Junction', sans-serif;
+$font-league-gothic:  'League Gothic', sans-serif;
+
+$handegg-text:  $font-league-gothic;
+$app-text:      $font-junction;
+
+/**
+ * FONT-SIZES
+
+ * Always use these variables when sizing type. Sizing font icons are
+ * the only exception since they may require more detailed sizing.
+ */
+
+$fs-tiny: 12px; // Not in design
+$fs-mega-small: 14px;
+$fs-extra-small: 16px;
+$fs-small: 18px;
+$fs-medium: 22px;
+$fs-large: 24px;
+$fs-extra-large: 26px;
+$fs-mega-large: 32px;
+$fs-hero: 40px; // Not in design
+
+/**
+ * FONT-WEIGHTS
+
+ * Like it says on the tin
+ */
+
+$fw-light:   300;
+$fw-regular: 500;
+$fw-bold:    700;
+
