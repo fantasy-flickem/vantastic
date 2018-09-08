@@ -54,4 +54,7 @@ export default {
 <style lang="scss">
   @import 'src/assets/stylesheets/_variables.scss';
   @import 'src/assets/stylesheets/lib/_normalize.scss';
+  @import 'src/assets/stylesheets/lib/_base.scss';
+  @import 'src/assets/stylesheets/_layout.scss';
+  @import 'src/assets/stylesheets/text.scss';
 </style>

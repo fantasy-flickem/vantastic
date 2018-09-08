@@ -1,4 +1,50 @@
 /**
+ * COLORS
+
+ * Color variables for branding
+ * This is about 25% done as of 2017-02-22
+ * Should include every brand color used in the product
+ */
+$black:       #0A0A0A;
+$dk-gray:     #373737; // Undefined
+$gray:        #B6C7CC; // Undefined
+$neutral-gray:#AFAFAF;
+$lt-gray:     #E0EAED; // Undefined
+$white:       #FCFEFF;
+
+$red:         #B1012F;
+// $orange:      #FCC853; // Undefined
+$yellow:      #EFC300;
+// $green:       #0000FF; // Undefined
+$blue:        #428FC1;
+$dk-blue:      #0C204F;
+
+$background:  $blue;
+$midground:   $white;
+$foreground:  $black;
+
+$shadow:rgba(0,0,0,0.25);
+
+/**
+ * NON-COLOR VARIABLES
+
+ * Variables for system-wide non-color aesthetics
+ */
+
+$max-width: 1200px;
+$padding-1: 10px;
+$padding-2: $padding-1 * 2;
+$padding-3: $padding-1 * 3;
+
+$border:        2px solid;
+$border-picked: 4px solid;
+$navbar-height: 108px;
+$line-height:   1.428571429;
+$logo-height:   60px;
+$input-height:  40px;
+$button-height: 50px;
+
+/**
  * FONTS
 
  *
@@ -77,3 +123,27 @@ $fw-light:   300;
 $fw-regular: 500;
 $fw-bold:    700;
 
+/**
+ * Z-INDICES
+
+ * Always use these variables when declaring z-index values.
+ */
+
+$z-hidden   : -1;
+$z-base     :  0;
+$z-ui-bottom:  1;
+$z-ui-middle:  2;
+$z-ui-top   :  3;
+$z-overlay  :  4;
+$z-modal    :  5;
+$z-testing  :  6;
+
+/**
+ * BREAKPOINTS
+
+ * Used for media queries
+ */
+
+$b-phone     :  600px;
+$b-tablet    :  780px;
+$b-large     : 1152px;

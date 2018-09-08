@@ -1,0 +1,15 @@
+/**
+ * BASE
+
+ * App-wide CSS properties that must be
+ * Overwritten if they are to be changed
+ */
+
+html body {
+  background-color: $blue;
+  font-family: $app-text;
+  font-weight: $fw-light;
+  color: $dk-blue;
+}
+
+*:focus { outline: 0; }
