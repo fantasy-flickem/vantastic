@@ -5,9 +5,6 @@
   </div>
 </template>
 
-<style>
-</style>
-
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
@@ -53,3 +50,7 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  @import 'src/assets/stylesheets/lib/_normalize.scss';
+</style>
