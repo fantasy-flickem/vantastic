@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>LEADERBOARD</h1>
+    <h1>Standings as of week {{ currentWeekNumber }}</h1>
     <div v-if='tribeUsersArray.length > 0'>
       <div v-for='(tribeUser, index) in tribeUsersArray' :key='index'>
         <Competitor :competitor=tribeUser></Competitor>
@@ -16,7 +16,7 @@ import Competitor from './Competitor'
 export default {
   name: 'Leaderboard',
   components: { Competitor },
-  props: [ 'user' ],
+  props: [ 'currentWeekNumber', 'user' ],
   data () {
     return {
       currentDbUser: null,

@@ -2,7 +2,7 @@
   <div>
     <div class="stripe">
       <div class="l-header">
-        <h1>WEEK {{ currentWeekNumber }}</h1>
+        <h1>WEEK {{ currentlyViewedWeekNumber }}</h1>
         <h3>Games</h3>
       </div>
     </div>
@@ -18,8 +18,8 @@
     </div>
     <div class="stripe">
       <div class="l-footer">
-        <router-link v-if='currentWeekNumber > 1' :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
-        <router-link v-if='currentWeekNumber < 17' :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
+        <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
+        <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
       </div>
     </div>
   </div>
@@ -38,12 +38,12 @@ export default {
       thisWeeksGames: [],
       gameGroups: [],
       favoriteTeamGame: null,
-      currentWeekNumber: null
+      currentlyViewedWeekNumber: null
     }
   },
   methods: {
     fetchData (_currentlyViewedWeek) {
-      this.currentWeekNumber = Number(_currentlyViewedWeek)
+      this.currentlyViewedWeekNumber = Number(_currentlyViewedWeek)
       let teamsRef = db.collection('teams')
       let gamesRef = db.collection('games').where('week', '==', _currentlyViewedWeek)
       let teams = []
@@ -84,8 +84,6 @@ export default {
           let mondayGames = []
           let favoriteTeamIsPlayingThisWeek = false
           this.games.forEach(game => {
-            // TODO-async: Because this.user is a prop coming from App, and it's async,
-            //             It's not possible for the user will encounter this line before this.user is populated
             if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
               favoriteTeamIsPlayingThisWeek = true
               this.favoriteTeamGame = game

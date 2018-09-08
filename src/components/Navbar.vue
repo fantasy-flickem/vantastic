@@ -18,10 +18,9 @@
 import firebase from 'firebase'
 export default {
   name: 'Navbar',
+  props: [ 'currentWeekNumber' ],
   data () {
     return {
-      currentWeek: '1',
-      currentWeekNumber: '2',
       authUser: null
     }
   },
@@ -31,7 +30,6 @@ export default {
     },
     logout () {
       firebase.auth().signOut().then(() => {
-        this.$emit('log-user-out')
         this.$router.push({ name: 'Landing' })
       })
     }

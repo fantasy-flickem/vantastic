@@ -37,6 +37,7 @@ import firebase from 'firebase'
 
 export default {
   name: 'Register',
+  props: [ 'currentWeekNumber' ],
   data () {
     return {
       email: null,
@@ -64,7 +65,7 @@ export default {
             })
           })
           .then(() => {
-            this.$router.push({ name: 'Landing' })
+            this.$router.push({ name: 'Week', params: { week_number: this.currentWeekNumber } })
           })
           .catch(err => {
             this.feedback = err.message

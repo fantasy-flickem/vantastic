@@ -1,8 +1,7 @@
 <template>
   <div>
-    <Navbar />
-    <router-view :user=this.user />
-    <!-- <router-view :v-if="this.user" :user=this.user :currentWeekNumber=this.currentWeekNumber /> -->
+    <Navbar :currentWeekNumber=this.currentWeekNumber />
+    <router-view :user=this.user :currentWeekNumber=this.currentWeekNumber />
   </div>
 </template>
 
@@ -12,6 +11,7 @@
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
+import moment from 'moment'
 import Landing from './components/Landing'
 import Leaderboard from './components/Leaderboard'
 import Navbar from './components/Navbar'
@@ -26,6 +26,7 @@ export default {
   },
   data () {
     return {
+      currentWeekNumber: null,
       user: null
     }
   },
@@ -45,6 +46,7 @@ export default {
   },
   created () {
     this.getCurrentDbUser()
+    this.currentWeekNumber = moment().diff(moment('2018-09-06'), 'weeks') + 1
   },
   updated () {
     this.getCurrentDbUser()

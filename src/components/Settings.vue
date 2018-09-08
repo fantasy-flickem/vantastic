@@ -24,7 +24,7 @@
 import db from '@/firebase/init'
 export default {
   name: 'Settings',
-  props: [ 'user' ],
+  props: [ 'currentWeekNumber', 'user' ],
   data () {
     return {
       feedback: null,
@@ -38,8 +38,7 @@ export default {
         db.collection('users').doc(this.user.id).update({
           displayName: this.user.displayName
         }).then(() => {
-          // TODO: push user to the current week
-          this.$router.push({ name: 'Week', params: { week_number: 1 } })
+          this.$router.push({ name: 'Week', params: { week_number: this.currentWeekNumber } })
         }).catch((err) => {
           this.feedback = err.message
         })

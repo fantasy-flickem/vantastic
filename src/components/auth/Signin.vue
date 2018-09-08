@@ -23,6 +23,7 @@ import firebase from 'firebase'
 
 export default {
   name: 'Signin',
+  props: [ 'currentWeekNumber' ],
   data () {
     return {
       email: null,
@@ -36,7 +37,7 @@ export default {
         this.feedback = null
         firebase.auth().signInWithEmailAndPassword(this.email, this.password)
           .then(() => {
-            this.$router.push({ name: 'Week', params: { week_number: 1 } })
+            this.$router.push({ name: 'Week', params: { week_number: this.currentWeekNumber } })
           })
           .catch(err => {
             this.feedback = err.message
