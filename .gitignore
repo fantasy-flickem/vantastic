@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Firestore detritus
+*.cache
+
 # Editor directories and files
 .idea
 .vscode
