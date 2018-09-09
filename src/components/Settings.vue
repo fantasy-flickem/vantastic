@@ -12,7 +12,7 @@
         <div class="text text--fs-mega-small text--fw-regular" style="margin-top:20px; margin-left:20px;">Favorite team</div>
         <div class="text" style="padding:10px 20px 0;">{{ this.user.favoriteTeamId }}</div>
       </div>
-      <div class="button__group">
+      <div class="button__group button__group--vertical">
         <button class="button">Update my settings</button>
       </div>
     </form>

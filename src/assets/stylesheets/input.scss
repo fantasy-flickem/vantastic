@@ -20,7 +20,7 @@
   }
   input {
     display: block;
-    width: calc(100% - (#{$padding-4} + 2px));
+    width: 100%;
     height: $input-height;
     padding-right: $padding-2;
     padding-left: $padding-2;

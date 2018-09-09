@@ -10,11 +10,47 @@
   height: $button-height;
   background-color: $white;
 
+  // Modifiers
+  // .button--conditionally-visible
+  &--conditionally-visible {
+    margin-left: auto;
+  }
+  
   // Elements
   // .button__group
   &__group {
+    display: flex;
+    height: $button-height;
     margin-top: $padding-3;
     border-top: $border $dk-blue;
-    border-bottom: $border $dk-blue;
+
+    // Modifiers
+    // .button__group--horizontal
+    &--horizontal {
+      & > button {
+        border-bottom: $border $dk-blue;
+        & + button {
+          border-left: $border $dk-blue;
+        }
+        & ~ button.button--conditionally-visible {
+          margin-left: 0;
+        }
+      }
+    }
+    // .button__group--vertical
+    &--vertical {
+      flex-direction: column;
+      height: auto;
+      min-height: $button-height;
+      
+      & > button {
+        & + button {
+          border-top: $border $dk-blue;
+        }
+        &:last-of-type {
+          border-bottom: $border $dk-blue;
+        }
+      }
+    }
   }
 }

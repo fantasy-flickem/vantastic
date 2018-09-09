@@ -12,6 +12,12 @@ html body {
   color: $dk-blue;
 }
 
-*:focus { outline: 0; }* {
+button {
+  padding: 0;
+  border: none;
+}
+
+* {
   box-sizing: border-box;
+  :focus { outline: 0; }
 }

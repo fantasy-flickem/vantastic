@@ -1,10 +1,8 @@
 <template>
-  <div>
-    <h1>Standings as of week {{ currentWeekNumber }}</h1>
-    <div v-if='tribeUsersArray.length > 0'>
-      <div v-for='(tribeUser, index) in tribeUsersArray' :key='index'>
-        <Competitor :competitor=tribeUser></Competitor>
-      </div>
+  <div class="l-content">
+    <div v-if='tribeUsersArray.length > 0' class="runner runner--with-bottom-border" style="min-height:60vh">
+      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Week {{ currentWeekNumber }} leaders</div>
+      <Competitor v-for='(tribeUser, index) in tribeUsersArray' :key='index' :competitor=tribeUser></Competitor>
     </div>
   </div>
 </template>
