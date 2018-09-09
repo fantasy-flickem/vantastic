@@ -6,7 +6,7 @@
         <label for="displayName">Display name</label>
         <input id="displayName" type="text" v-model="user.displayName">
       </div>
-      <div v-if="feedback" class="text">{{ feedback }}</div>
+      <div v-if="feedback" class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
       <!-- <div v-if='this.user.tribeId'>You belong to {{ this.user.tribeId }}</div> -->
       <div v-if="this.user.favoriteTeamId">
         <div class="text text--fs-mega-small text--fw-regular" style="margin-top:20px; margin-left:20px;">Favorite team</div>
