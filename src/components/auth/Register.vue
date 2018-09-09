@@ -1,31 +1,33 @@
 <template>
-  <div>
-    <form @submit.prevent="register">
-      <h2>Register</h2>
-      <div>
+  <div class="l-content">
+    <form @submit.prevent="register" class="runner">
+      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Register</div>
+      <div class="input" style="margin-top:20px;">
         <label for="display-name">Display name</label>
         <input id="display-name" v-model="displayName">
       </div>
-      <div>
+      <div class="input" style="margin-top:20px;">
         <label for="email">Email</label>
         <input id="email" type="email" v-model="email">
       </div>
-      <div>
+      <div class="input" style="margin-top:20px;">
         <label for="password">Password</label>
         <input id="password" type="password" v-model="password">
       </div>
-      <label for="favorite-team-id">Choose your favorite team:</label>
-      <select id="favorite-team-id" v-model="favoriteTeamId">
-        <option value="">--Please choose an option--</option>
-        <option v-for='team in teams' :key=team.id :value=team.id>{{ team.name }}</option>
-      </select>
-      <div>
-        <label for="tribe-id">Please enter your tribe's password</label>
+      <div class="dropdown">
+        <label for="favorite-team-id">Choose your favorite team:</label>
+        <select id="favorite-team-id" v-model="favoriteTeamId">
+          <option value="">--Please choose an option--</option>
+          <option v-for='team in teams' :key=team.id :value=team.id>{{ team.name }}</option>
+        </select>
+      </div>
+      <div class="input" style="margin-top:20px;">
+        <label for="tribe-id">Group password</label>
         <input id="tribe-id" type="text" v-model="tribeId">
       </div>
       <p v-if="feedback">{{ feedback }}</p>
-      <div>
-        <button>Register</button>
+      <div class="button__group button__group--vertical">
+        <button class="button">Register</button>
       </div>
     </form>
   </div>
