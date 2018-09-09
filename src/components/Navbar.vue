@@ -1,19 +1,18 @@
 <template>
   <div v-if='authUser' class="l-navbar">
-    <div class="text">{{ currentRouteName }}</div>
-    <ul>
-      <li><router-link :to="{ name: 'Picks', params: { week_number: currentWeekNumber } }">Picks</router-link></li>
-      <li><router-link :to="{ name: 'Leaderboard' }">Leaderboard</router-link></li>
-      <li><router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }">Settings</router-link></li>
-    </ul>
-    <button @click='logout()'>Logout</button>
+    <div class="button__group button__group--horizontal" style="margin:0;">
+      <div class="text">{{ currentRouteName }}</div>
+      <router-link :to="{ name: 'Picks', params: { week_number: currentWeekNumber } }" class="button">Picks</router-link>
+      <router-link :to="{ name: 'Leaderboard' }" class="button">Leaderboard</router-link>
+      <router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }" class="button">Settings</router-link>
+      <button @click='logout()' class="button">Logout</button>
+    </div>
   </div>
   <div v-else class="l-navbar">
-    <div class="text">{{ currentRouteName }}</div>
-    <ul>
-      <li><router-link :to="{ name: 'Register' }">Register</router-link></li>
-      <li><router-link :to="{ name: 'Signin' }">Sign in</router-link></li>
-    </ul>
+    <div class="button__group button__group--horizontal" style="margin:0;">
+      <router-link :to="{ name: 'Register' }" class="button">Register</router-link>
+      <router-link :to="{ name: 'Signin' }" class="button">Sign in</router-link>
+    </div>
   </div>
 </template>
 
