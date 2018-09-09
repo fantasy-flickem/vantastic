@@ -142,9 +142,3 @@ export default {
 }
 </script>
 
-<style>
-.game {
-  display: flex;
-  justify-content: space-between;
-}
-</style>
