@@ -1,8 +1,9 @@
 <template>
   <div v-if='authUser'>
+    <div class="text">{{ currentRouteName }}</div>
     <button @click='goBack()'>Back</button>
     <ul>
-      <li><router-link :to="{ name: 'Week', params: { week_number: currentWeekNumber } }">Week</router-link></li>
+      <li><router-link :to="{ name: 'Picks', params: { week_number: currentWeekNumber } }">Picks</router-link></li>
       <li><router-link :to="{ name: 'Leaderboard' }">Leaderboard</router-link></li>
       <li><router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }">Settings</router-link></li>
     </ul>
@@ -21,7 +22,8 @@ export default {
   props: [ 'currentWeekNumber' ],
   data () {
     return {
-      authUser: null
+      authUser: null,
+      currentRouteName: this.$router.history.current.name
     }
   },
   methods: {
@@ -32,6 +34,9 @@ export default {
       firebase.auth().signOut().then(() => {
         this.$router.push({ name: 'Landing' })
       })
+    },
+    updateCurrentRouteName () {
+      this.currentRouteName = this.$router.history.current.name
     }
   },
   created () {
@@ -42,6 +47,9 @@ export default {
         this.authUser = null
       }
     })
+  },
+  watch: {
+    $route: 'updateCurrentRouteName'
   }
 }
 </script>
