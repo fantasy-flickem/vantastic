@@ -1,11 +1,11 @@
 <template>
   <div class="l-content" style="margin-bottom:50px;">
     <div class="runner">
-      <div v-if='gameGroups.length > 0'>
-        <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
-          <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-          <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name class="game"></Game>
-        </div>
+      <div v-if='isFetchingData' style="height:100vh">
+      </div>
+      <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
+        <div v-if='gameGroup.games' class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
+        <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name></Game>
       </div>
     </div>
     <div class="l-footer">
@@ -28,17 +28,20 @@ export default {
   props: [ 'user' ],
   data () {
     return {
-      thisWeeksGames: [],
+      currentlyViewedWeekNumber: null,
       gameGroups: [],
       favoriteTeamGame: null,
-      currentlyViewedWeekNumber: null
+      isFetchingData: true,
+      thisWeeksGames: []
     }
   },
   methods: {
     fetchData (_currentlyViewedWeek) {
+      this.isFetchingData = true
       this.currentlyViewedWeekNumber = Number(_currentlyViewedWeek)
       let teamsRef = db.collection('teams')
       let gamesRef = db.collection('games').where('week', '==', _currentlyViewedWeek)
+      let picksRef = db.collection('picks')
       let teams = []
       let games = []
       teamsRef.get().then(snapshot => {
@@ -61,7 +64,34 @@ export default {
             }
             games.push(game)
           })
-          this.games = games
+          return games
+        }).then(_games => {
+          let gamesArray = []
+          _games.forEach(game => {
+            let gameHasPick = false
+            picksRef.where('gameId', '==', game.id).where('uid', '==', this.user.uid).get().then(snapshot => {
+              snapshot.forEach(doc => {
+                let pick = doc.data()
+                pick.id = doc.id
+                if (pick.teamId === game.homeTeam.id) {
+                  game.homeTeamIsPicked = true
+                  game.homeTeamIsCorrect = pick.isCorrect
+                }
+                if (pick.teamId === game.awayTeam.id) {
+                  game.awayTeamIsPicked = true
+                  game.awayTeamIsCorrect = pick.isCorrect
+                }
+                gameHasPick = true
+              })
+            })
+            if (!gameHasPick) {
+              game.homeTeamIsPicked = false
+              game.awayTeamIsPicked = false
+            }
+            game.hasPick = gameHasPick
+            gamesArray.push(game)
+          })
+          this.games = gamesArray
         }).then(() => {
           let createGameGroupObject = (_gameGroupName, _gamesArray) => {
             if (_gamesArray.length > 0) {
@@ -115,6 +145,7 @@ export default {
           if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
           if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
           this.gameGroups = gameGroups
+          this.isFetchingData = false
         })
       })
     },

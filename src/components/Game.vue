@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <button class="team" :disabled=gameStartTimeHasPassed @click="makePick(game, game.homeTeamId, gameGroupName)">{{ game.homeTeam.name }}</button>
-    <button class="team" :disabled=gameStartTimeHasPassed @click="makePick(game, game.awayTeamId, gameGroupName)">{{ game.awayTeam.name }}</button>
+  <div class="game">
+    <div class="button__group button__group--horizontal" style="width:100%;">
+      <button class="button" :class='[ game.homeTeamIsPicked ? isPickedClass : isUnpickedClass, game.homeTeamIsCorrect ? correctPickClass : incorrectPickClass]' :disabled=gameStartTimeHasPassed @click="makeOrUpdatePick(game, game.homeTeamId)">{{ game.homeTeam.name }}</button>
+      <button class="button" :class='[ game.awayTeamIsPicked ? isPickedClass : isUnpickedClass, game.awayTeamIsCorrect ? correctPickClass : incorrectPickClass]' :disabled=gameStartTimeHasPassed @click="makeOrUpdatePick(game, game.awayTeamId)">{{ game.awayTeam.name }}</button>
+    </div>
   </div>
 </template>
 
@@ -13,17 +15,38 @@ export default {
   name: 'Game',
   props: [ 'game', 'gameGroupName', 'user' ],
   data () {
-    return { }
+    return {
+      isPickedClass: 'button--is-picked',
+      isunPickedClass: 'button--is-unpicked',
+      correctPickClass: 'button--correct-pick'
+    }
   },
   computed: {
     gameStartTimeHasPassed () {
       let gameStartTime = moment(this.game.startTime.seconds * 1000)
       let now = moment()
       return gameStartTime.diff(now) < 0
+    },
+    incorrectPickClass () {
+      if (this.game.hasPick) {
+        return 'button--incorrect-pick'
+      } else {
+        return ''
+      }
+    },
+    isUnpickedClass () {
+      if (!this.game.hasPick) {
+        return 'button--is-unpicked'
+      } else {
+        return ''
+      }
+    },
+    homeTeamClass () {
+      return 'text'
     }
   },
   methods: {
-    makePick (_game, _teamId) {
+    makeOrUpdatePick (_game, _teamId) {
       let isFavoriteTeamGame = this.gameGroupName === 'Favorite team game'
       if (!this.gameStartTimeHasPassed) {
         let currentUserUid = firebase.auth().currentUser.uid
@@ -40,11 +63,13 @@ export default {
             })
             if (pick) {
               if (pick.teamId !== _teamId) {
+                this.switchPick(_game)
                 db.collection('picks').doc(pick.id).update({
                   teamId: _teamId
                 })
               }
             } else {
+              this.makePick(_game, _teamId)
               db.collection('picks').add({
                 gameId: _game.id,
                 teamId: _teamId,
@@ -53,6 +78,19 @@ export default {
               })
             }
           })
+      }
+    },
+    makePick (_game, _teamId) {
+      if (_teamId === _game.homeTeamId) { _game.homeTeamIsPicked = true }
+      if (_teamId === _game.awayTeamId) { _game.awayTeamIsPicked = true }
+    },
+    switchPick (_game) {
+      if (_game.homeTeamIsPicked) {
+        _game.homeTeamIsPicked = false
+        _game.awayTeamIsPicked = true
+      } else {
+        _game.homeTeamIsPicked = true
+        _game.awayTeamIsPicked = false
       }
     }
   }

@@ -12,6 +12,15 @@
   // Elements
   // .game__group
   &__group {
-    
+    & > .text {
+      border-bottom: $border $dk-blue;
+    }
+    .button {
+      padding: 0 $padding-1;
+      &__group {
+        border-top: none;
+        margin-top: 0;
+      }
+    }
   }
 }

@@ -9,6 +9,7 @@
     background-color: $white;
     border-bottom: $border-picked $blue;
     outline: $border-picked $dk-blue;
+    z-index: $z-ui-top;
 
     &:before {
       content: ' ';
