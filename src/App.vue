@@ -58,6 +58,7 @@ export default {
   @import 'src/assets/stylesheets/_layout.scss';
   @import 'src/assets/stylesheets/button.scss';
   @import 'src/assets/stylesheets/game.scss';
+  @import 'src/assets/stylesheets/input.scss';
   @import 'src/assets/stylesheets/runner.scss';
   @import 'src/assets/stylesheets/text.scss';
 </style>

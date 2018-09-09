@@ -1,20 +1,19 @@
 <template>
-  <div v-if='user'>
-    <form @submit.prevent="updateSettings">
-      <h1>SETTINGS for {{ user.displayName }}</h1>
-      <div v-if='this.user.favoriteTeamId'>Your favorite team is {{ this.user.favoriteTeamId }}</div>
-      <div v-if='this.user.tribeId'>You belong to {{ this.user.tribeId }}</div>
-      <div>
-        <label for="email">Email</label>
-        <input id="email" type="email" v-model="user.email" disabled>
-      </div>
-      <div>
+  <div v-if="user" class="l-content">
+    <form @submit.prevent="updateSettings" class="runner">
+      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Settings</div>
+      <div class="input" style="margin-top:20px;">
         <label for="displayName">Display name</label>
         <input id="displayName" type="text" v-model="user.displayName">
       </div>
-      <p v-if="feedback">{{ feedback }}</p>
-      <div>
-        <button>Update my settings</button>
+      <div v-if="feedback" class="text">{{ feedback }}</div>
+      <!-- <div v-if='this.user.tribeId'>You belong to {{ this.user.tribeId }}</div> -->
+      <div v-if="this.user.favoriteTeamId">
+        <div class="text text--fs-mega-small text--fw-regular" style="margin-top:20px; margin-left:20px;">Favorite team</div>
+        <div class="text" style="padding:10px 20px 0;">{{ this.user.favoriteTeamId }}</div>
+      </div>
+      <div class="button__group">
+        <button class="button">Update my settings</button>
       </div>
     </form>
   </div>
@@ -51,6 +50,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss">
-</style>

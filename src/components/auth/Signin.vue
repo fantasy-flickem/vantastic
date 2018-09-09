@@ -1,18 +1,16 @@
 <template>
-  <div>
-    <form @submit.prevent="signin">
-      <h2>Signin</h2>
-      <div>
+  <div class="l-content">
+    <form @submit.prevent="signin" class="runner">
+      <div class="input">
         <label for="email">Email</label>
-        <input id="email" type="email" v-model="email">
+        <input id="email" type="email" placeholder="Enter your email" v-model="email">
       </div>
-      <div>
-        <label for="password">Password</label>
-        <input id="password" type="password" v-model="password">
+      <div class="input" style="margin-top:20px;">
+        <input id="password" type="password" placeholder="Aaaaaand your password" v-model="password">
       </div>
-      <p v-if="feedback">{{ feedback }}</p>
-      <div>
-        <button>Signin</button>
+      <div v-if="feedback" class="text">{{ feedback }}</div>
+      <div class=button__group>
+        <button class="button">Enter</button>
       </div>
     </form>
   </div>
