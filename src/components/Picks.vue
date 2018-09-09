@@ -29,8 +29,8 @@ export default {
   data () {
     return {
       currentlyViewedWeekNumber: null,
+      // favoriteTeamGame: null,
       gameGroups: [],
-      favoriteTeamGame: null,
       isFetchingData: true,
       thisWeeksGames: []
     }
@@ -105,12 +105,12 @@ export default {
           let sundayEarlyGames = []
           let sundayLateGames = []
           let mondayGames = []
-          let favoriteTeamIsPlayingThisWeek = false
+          // let favoriteTeamIsPlayingThisWeek = false
           this.games.forEach(game => {
-            if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
-              favoriteTeamIsPlayingThisWeek = true
-              this.favoriteTeamGame = game
-            }
+            // if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
+            //   favoriteTeamIsPlayingThisWeek = true
+            //   this.favoriteTeamGame = game
+            // }
             let startTime = game.startTime.seconds * 1000
             let gameDay = moment(startTime).format('dddd')
             switch (gameDay) {
@@ -134,16 +134,16 @@ export default {
                 break
             }
           })
-          if (!favoriteTeamIsPlayingThisWeek) {
-            this.favoriteTeamGame = null
-          }
+          // if (!favoriteTeamIsPlayingThisWeek) {
+          //   this.favoriteTeamGame = null
+          // }
           let gameGroups = []
           if (thursdayGames.length > 0) { gameGroups.push(createGameGroupObject('Thursday', thursdayGames)) }
           if (saturdayGames.length > 0) { gameGroups.push(createGameGroupObject('Saturday', saturdayGames)) }
           if (sundayEarlyGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames)) }
           if (sundayLateGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames)) }
           if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
-          if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
+          // if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
           this.gameGroups = gameGroups
           this.isFetchingData = false
         })
