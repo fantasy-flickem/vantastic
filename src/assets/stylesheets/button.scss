@@ -6,34 +6,52 @@
  */
 
 .button {
-  width: 100%;
+  flex: 1 1 0%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: $button-height;
+  margin: 0;
   background-color: $white;
+  text-transform: none;
+  text-decoration: none;
+  cursor: pointer;
+  color: $dk-blue;
 
   // Modifiers
-  // .button--conditionally-visible
-  &--conditionally-visible {
-    margin-left: auto;
+  // .button--previous-week
+  &--previous-week {
+    max-width: 50%;
+  }
+  // .button--next-week
+  &--next-week {
+    max-width: 50%;
+    margin-left: 50%;
   }
   
   // Elements
   // .button__group
   &__group {
+    position: relative;
     display: flex;
     height: $button-height;
     margin-top: $padding-3;
     border-top: $border $dk-blue;
-
+    
     // Modifiers
     // .button__group--horizontal
     &--horizontal {
-      & > button {
+      & > .button {
         border-bottom: $border $dk-blue;
-        & + button {
+        & + .button {
           border-left: $border $dk-blue;
         }
-        & ~ button.button--conditionally-visible {
+        // &:last-of-type {
+        //   margin-right: 50%;
+        // }
+        & ~ .button.button--next-week {
           margin-left: 0;
+          margin-right: 0;
         }
       }
     }
@@ -43,8 +61,8 @@
       height: auto;
       min-height: $button-height;
       
-      & > button {
-        & + button {
+      & > .button {
+        & + .button {
           border-top: $border $dk-blue;
         }
         &:last-of-type {

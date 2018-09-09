@@ -1,20 +1,18 @@
 <template>
-  <div>
-    <div class="l-content">
-      <div class="runner">
-        <div v-if='gameGroups.length > 0'>
-          <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
-            <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
-            <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name class="game"></Game>
-          </div>
+  <div class="l-content" style="margin-bottom:50px;">
+    <div class="runner">
+      <div v-if='gameGroups.length > 0'>
+        <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
+          <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
+          <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name class="game"></Game>
         </div>
       </div>
     </div>
     <div class="l-footer">
-      <div class="button__group">
-        <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Picks', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
-        <div>{{ currentlyViewedWeekNumber }}</div>
-        <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Picks', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
+      <div class="button__group button__group--horizontal" style="margin-top:0;">
+        <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Picks', params: { week_number: (decrementWeekNumber()) } }" class="button button--previous-week">Previous Week</router-link>
+        <div class="text text--fw-bold text--absolute-center">{{ currentlyViewedWeekNumber }}</div>
+        <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Picks', params: { week_number: (incrementWeekNumber()) } }" class="button button--next-week">Next Week</router-link>
       </div>
     </div>
   </div>

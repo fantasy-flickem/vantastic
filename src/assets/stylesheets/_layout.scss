@@ -5,7 +5,7 @@
     top: 0;
     right: 0;
     left: 0;
-    height: $button-height;
+    height: $button-height + 8px;
     background-color: $white;
     border-bottom: $border-picked $blue;
     outline: $border-picked $dk-blue;
@@ -26,7 +26,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: $button-height;
+    margin-top: $button-height + 12px;
     background-color: transparent;
   }
   // .l-footer
@@ -35,5 +35,6 @@
     right: 0;
     bottom: 0;
     left: 0;
+    background-color: $white;
   }
 }
