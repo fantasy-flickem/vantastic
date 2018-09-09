@@ -1,7 +1,7 @@
 <template>
   <div v-if='authUser' class="l-navbar">
     <div class="button__group button__group--horizontal" style="margin:0;">
-      <div class="text">{{ currentRouteName }}</div>
+      <!-- <div class="text">{{ currentRouteName }}</div> -->
       <router-link :to="{ name: 'Picks', params: { week_number: currentWeekNumber } }" class="button">Picks</router-link>
       <router-link :to="{ name: 'Leaderboard' }" class="button">Leaderboard</router-link>
       <router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }" class="button">Settings</router-link>
