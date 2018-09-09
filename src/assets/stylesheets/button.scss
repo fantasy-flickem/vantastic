@@ -1,0 +1,20 @@
+/**
+ * BUTTON
+
+ * Container for one or many <button>
+ *
+ */
+
+.button {
+  width: 100%;
+  height: $button-height;
+  background-color: $white;
+
+  // Elements
+  // .button__group
+  &__group {
+    margin-top: $padding-3;
+    border-top: $border $dk-blue;
+    border-bottom: $border $dk-blue;
+  }
+}

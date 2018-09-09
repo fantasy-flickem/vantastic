@@ -15,11 +15,11 @@ import Navbar from './components/Navbar'
 import Register from './components/auth/Register'
 import Settings from './components/Settings'
 import Signin from './components/auth/Signin'
-import Week from './components/Week'
+import Picks from './components/Picks'
 export default {
   name: 'vantastic',
   components: {
-    Landing, Leaderboard, Navbar, Register, Settings, Signin, Week
+    Landing, Leaderboard, Navbar, Register, Settings, Signin, Picks
   },
   data () {
     return {
@@ -56,5 +56,8 @@ export default {
   @import 'src/assets/stylesheets/lib/_normalize.scss';
   @import 'src/assets/stylesheets/lib/_base.scss';
   @import 'src/assets/stylesheets/_layout.scss';
+  @import 'src/assets/stylesheets/button.scss';
+  @import 'src/assets/stylesheets/game.scss';
+  @import 'src/assets/stylesheets/runner.scss';
   @import 'src/assets/stylesheets/text.scss';
 </style>

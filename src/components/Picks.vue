@@ -1,25 +1,20 @@
 <template>
   <div>
-    <div class="stripe">
-      <div class="l-header">
-        <h1>WEEK {{ currentlyViewedWeekNumber }}</h1>
-        <h3>Games</h3>
-      </div>
-    </div>
-    <div class="stripe">
-      <div class="l-content">
+    <div class="l-content">
+      <div class="runner">
         <div v-if='gameGroups.length > 0'>
-          <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game-group">
+          <div v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
             <div v-if='gameGroup.games'>{{ gameGroup.name }}</div>
             <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name class="game"></Game>
           </div>
         </div>
       </div>
     </div>
-    <div class="stripe">
-      <div class="l-footer">
-        <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Week', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
-        <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Week', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
+    <div class="l-footer">
+      <div class="button__group">
+        <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Picks', params: { week_number: (decrementWeekNumber()) } }">Previous Week</router-link>
+        <div>{{ currentlyViewedWeekNumber }}</div>
+        <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Picks', params: { week_number: (incrementWeekNumber()) } }">Next Week</router-link>
       </div>
     </div>
   </div>
@@ -30,7 +25,7 @@ import db from '@/firebase/init'
 import moment from 'moment'
 import Game from './Game'
 export default {
-  name: 'Week',
+  name: 'Picks',
   components: { Game },
   props: [ 'user' ],
   data () {
@@ -141,4 +136,3 @@ export default {
   }
 }
 </script>
-

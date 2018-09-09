@@ -38,7 +38,7 @@ export default {
         db.collection('users').doc(this.user.id).update({
           displayName: this.user.displayName
         }).then(() => {
-          this.$router.push({ name: 'Week', params: { week_number: this.currentWeekNumber } })
+          this.$router.push({ name: 'Picks', params: { week_number: this.currentWeekNumber } })
         }).catch((err) => {
           this.feedback = err.message
         })

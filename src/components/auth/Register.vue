@@ -65,7 +65,7 @@ export default {
             })
           })
           .then(() => {
-            this.$router.push({ name: 'Week', params: { week_number: this.currentWeekNumber } })
+            this.$router.push({ name: 'Picks', params: { week_number: this.currentWeekNumber } })
           })
           .catch(err => {
             this.feedback = err.message

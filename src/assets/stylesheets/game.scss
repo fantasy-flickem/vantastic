@@ -1,0 +1,17 @@
+/**
+ * GAME
+
+ * Each <Game> in the list of games
+ *
+ */
+
+.game {
+  display: flex;
+  justify-content: space-between;
+
+  // Elements
+  // .game__group
+  &__group {
+    
+  }
+}

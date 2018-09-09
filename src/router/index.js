@@ -7,7 +7,7 @@ import Leaderboard from '@/components/Leaderboard'
 import Register from '@/components/auth/Register'
 import Settings from '@/components/Settings'
 import Signin from '@/components/auth/Signin'
-import Week from '@/components/Week'
+import Picks from '@/components/Picks'
 
 Vue.use(Router)
 
@@ -46,8 +46,8 @@ const router = new Router({
     },
     {
       path: '/weeks/:week_number',
-      name: 'Week',
-      component: Week,
+      name: 'Picks',
+      component: Picks,
       meta: {
         requiresAuth: true
       }

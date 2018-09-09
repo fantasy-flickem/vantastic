@@ -1,0 +1,13 @@
+/**
+ * RUNNER
+
+ * Middle-ground color that runs down the background
+ *
+ */
+
+.runner {
+  background-color: $white;
+  width: calc(100% - 40px);
+  border-right: $border $dk-blue;
+  border-left: $border $dk-blue;
+}
