@@ -33,7 +33,7 @@ export default {
     },
     logout () {
       firebase.auth().signOut().then(() => {
-        this.$router.push({ name: 'Landing' })
+        this.$router.push({ name: 'Signin' })
       })
     },
     updateCurrentRouteName () {
