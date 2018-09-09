@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="display:flex; flex-direction:column;">
     <Navbar :currentWeekNumber=this.currentWeekNumber />
     <router-view :user=this.user :currentWeekNumber=this.currentWeekNumber />
   </div>

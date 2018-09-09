@@ -6,8 +6,15 @@
  */
 
 .runner {
+  flex: 1 1 auto;
   background-color: $white;
-  width: calc(100% - 40px);
+  width: calc(100% - #{$padding-4});
   border-right: $border $dk-blue;
   border-left: $border $dk-blue;
+
+  // Modifiers
+  // .runner--with-bottom-border
+  &--with-bottom-border {
+    border-bottom: $border $dk-blue;
+  }
 }

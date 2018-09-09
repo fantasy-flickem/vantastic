@@ -1,8 +1,39 @@
 .l {
+  // .l-navbar
+  &-navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: $button-height;
+    background-color: $white;
+    border-bottom: $border-picked $blue;
+    outline: $border-picked $dk-blue;
+
+    &:before {
+      content: ' ';
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      border-bottom: $border-picked $dk-blue;
+      position: absolute;
+    }
+  }
+  // .l-content
   &-content {
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: $button-height;
     background-color: transparent;
+  }
+  // .l-footer
+  &-footer {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
   }
 }
