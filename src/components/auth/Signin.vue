@@ -1,12 +1,14 @@
 <template>
   <div class="l-content">
     <form @submit.prevent="signin" class="runner">
-      <div class="input" style="margin-top:30px">
+      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Sign in</div>
+      <div class="input" style="margin-top:20px">
         <label for="email">Email</label>
-        <input id="email" type="email" placeholder="Enter your email" v-model="email">
+        <input id="email" type="email" v-model="email">
       </div>
       <div class="input" style="margin-top:20px;">
-        <input id="password" type="password" placeholder="Aaaaaand your password" v-model="password">
+        <label for="email">Password</label>
+        <input id="password" type="password" v-model="password">
       </div>
       <div v-if="feedback" class="text">{{ feedback }}</div>
       <div class="button__group button__group--vertical">
