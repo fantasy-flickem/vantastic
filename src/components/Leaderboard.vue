@@ -22,6 +22,8 @@ export default {
     }
   },
   created () {
+    // TODO calculate score for each user
+    //      and write it to the db unless it hasn't changed
     console.log('Hi there. I\'ve got some information I\'d like to share with you:')
     if (!this.user) {
       console.log('It looks like you\'ve just refreshed the Leaderboard')

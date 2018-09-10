@@ -63,7 +63,8 @@ export default {
               email: this.email,
               displayName: this.displayName,
               favoriteTeamId: this.favoriteTeamId,
-              tribeId: this.tribeId
+              tribeId: this.tribeId,
+              score: 0
             })
           })
           .then(() => {

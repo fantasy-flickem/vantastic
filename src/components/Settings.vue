@@ -7,7 +7,11 @@
         <input id="displayName" type="text" v-model="user.displayName">
       </div>
       <div v-if="feedback" class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
+      <!-- TODO Add group password to settings -->
       <!-- <div v-if='this.user.tribeId'>You belong to {{ this.user.tribeId }}</div> -->
+      <!-- TODO Add current record to settings -->
+      <!-- TODO Add edit password (nav?) to settings -->
+      <!-- TODO Add favorite team logo to settings -->
       <div v-if="this.user.favoriteTeamId">
         <div class="text text--fs-mega-small text--fw-regular" style="margin-top:20px; margin-left:20px;">Favorite team</div>
         <div class="text" style="padding:10px 20px 0;">{{ this.user.favoriteTeamId }}</div>
