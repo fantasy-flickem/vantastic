@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import firebase from 'firebase'
 
+import Accounting from '@/components/Accounting'
 import Landing from '@/components/Landing'
 import Leaderboard from '@/components/Leaderboard'
 import Register from '@/components/auth/Register'
@@ -43,6 +44,14 @@ const router = new Router({
       path: '/signin',
       name: 'Signin',
       component: Signin
+    },
+    {
+      path: '/accounting/',
+      name: 'Accounting',
+      component: Accounting,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/weeks/:week_number',

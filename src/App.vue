@@ -9,6 +9,7 @@
 import db from '@/firebase/init'
 import firebase from 'firebase'
 import moment from 'moment'
+import Accounting from './components/Accounting'
 import Landing from './components/Landing'
 import Leaderboard from './components/Leaderboard'
 import Navbar from './components/Navbar'
@@ -19,7 +20,7 @@ import Picks from './components/Picks'
 export default {
   name: 'vantastic',
   components: {
-    Landing, Leaderboard, Navbar, Register, Settings, Signin, Picks
+    Accounting, Landing, Leaderboard, Navbar, Register, Settings, Signin, Picks
   },
   data () {
     return {

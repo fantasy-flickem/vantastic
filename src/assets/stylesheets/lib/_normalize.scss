@@ -333,14 +333,12 @@ input {
  *
  * 1. Address box sizing set to `content-box` in IE 8/9/10.
  * 2. Remove excess padding in IE 8/9/10.
- * 3. Override bootstrap's CSS
  */
 
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box; /* 1 */
   padding: 0; /* 2 */
-  margin: 0 !important; /* 3 */
 }
 
 /**

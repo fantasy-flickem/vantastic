@@ -31,4 +31,21 @@
       }
     }
   }
+  // .game__input
+  &__input {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: $padding-1;
+
+    .input {
+      flex: 1 1 auto;
+
+      &[type='checkbox'] {
+        margin-right: 5px;
+        margin-bottom: 13px;
+      }
+      
+      & + .input { margin-left: 5px; }
+    }
+  }
 }
