@@ -13,7 +13,7 @@ import firebase from 'firebase'
 import moment from 'moment'
 export default {
   name: 'Game',
-  props: [ 'game', 'gameGroupName', 'user' ],
+  props: [ 'currentlyViewedWeekNumber', 'game', 'gameGroupName', 'user' ],
   data () {
     return {
       isPickedClass: 'button--is-picked',
@@ -74,7 +74,10 @@ export default {
                 gameId: _game.id,
                 teamId: _teamId,
                 uid: currentUserUid,
-                isFavoriteTeamGame: isFavoriteTeamGame
+                isFavoriteTeamGame: isFavoriteTeamGame,
+                isAccounted: false,
+                isCorrect: false,
+                week: Number(this.currentlyViewedWeekNumber)
               })
             }
           })

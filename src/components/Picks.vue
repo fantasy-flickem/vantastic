@@ -5,7 +5,7 @@
       </div>
       <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
         <div v-if='gameGroup.games' class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
-        <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :gameGroupName=gameGroup.name></Game>
+        <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :currentlyViewedWeekNumber=currentlyViewedWeekNumber :gameGroupName=gameGroup.name></Game>
       </div>
     </div>
     <div class="l-footer">
