@@ -65,68 +65,68 @@ export default {
       return profile
     },
     updateScores () {
-      console.log('updateScores is firing')
       let unaccountedPicksArray = []
-      let picksRef = db.collection('picks')
-      picksRef.where('isAccounted', '==', false).get().then(snapshot => {
+      let unaccountedPastPicksRef = db.collection('picks').where('isAccounted', '==', false)
+      unaccountedPastPicksRef.get().then(snapshot => {
         snapshot.forEach(doc => {
           let pick = doc.data()
           pick.id = doc.id
-          unaccountedPicksArray.push(pick)
+          if (pick.week <= this.currentWeekNumber) {
+            unaccountedPicksArray.push(pick)
+          }
         })
         // [ {pick}, {pick}, {pick}, {pick}, {pick} ]
-        console.log('unaccountedPicksArray', unaccountedPicksArray)
         return unaccountedPicksArray
       }).then(_unaccountedPicksArray => {
         let usersWithPicksArray = []
         this.tribeUsersArray.forEach(tribeUser => {
           let userWithPicksObject = {
             uid: tribeUser.uid,
+            userDbId: tribeUser.id,
+            userScore: tribeUser.score,
             picksArray: []
           }
-          console.log(tribeUser.uid)
           let picksArray = _unaccountedPicksArray.filter(pick => pick.uid === tribeUser.uid)
           userWithPicksObject.picksArray = picksArray
           // TODO picksArray is coming up totally empty 100% of the time
           usersWithPicksArray.push(userWithPicksObject)
         })
-        console.log('usersWithPicksArray', usersWithPicksArray)
         return usersWithPicksArray
       }).then(_usersWithPicksArray => {
         let gamesRef = db.collection('games')
         let picksRef = db.collection('picks')
         let usersRef = db.collection('users')
+        // Don't need to have the uid next to the pick in a special object
+        // since the pick has the picker's uid
         _usersWithPicksArray.forEach(userObject => {
           userObject.picksArray.forEach(pick => {
             let game = null
             gamesRef.doc(pick.gameId).get().then(doc => {
-              console.log(doc.data())
               game = doc.data()
               game.id = doc.id
+            }).then(() => {
+              let isCorrect = false
+              if (game && game.isFinal) {
+                isCorrect = game.result === 'TIE' || game.result === pick.teamId
+                if (isCorrect) {
+                  picksRef.doc(pick.id).update({
+                    isAccounted: true,
+                    isCorrect: true
+                  }).then(() => {
+                    usersRef.doc(userObject.userDbId).update({
+                      score: userObject.userScore + 1
+                    })
+                  })
+                } else {
+                  picksRef.doc(pick.id).update({
+                    isAccounted: true,
+                    isCorrect: false
+                  })
+                }
+              }
             })
-            let isCorrect = false
-            if (game && game.result) {
-              console.log(game.result, pick.teamId)
-              isCorrect = game.result === "TIE" || game.result === pick.teamId
-            }
-            if (isCorrect) {
-              picksRef.doc(pick.id).update({
-                isAccounted: true,
-                isCorrect: true
-              }).then(() => {
-                usersRef.doc(userObject.id).update({
-                  score: userObject.score + 1
-                })
-              })
-            } else {
-              picksRef.doc(pick.id).update({
-                isAccounted: true,
-                isCorrect: false
-              })
-            }
           })
         })
-        console.log('updateScores is done firing')
       })
     }
   }
