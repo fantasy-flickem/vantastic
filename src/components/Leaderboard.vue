@@ -88,7 +88,6 @@ export default {
           }
           let picksArray = _unaccountedPicksArray.filter(pick => pick.uid === tribeUser.uid)
           userWithPicksObject.picksArray = picksArray
-          // TODO picksArray is coming up totally empty 100% of the time
           usersWithPicksArray.push(userWithPicksObject)
         })
         return usersWithPicksArray
@@ -96,16 +95,15 @@ export default {
         let gamesRef = db.collection('games')
         let picksRef = db.collection('picks')
         let usersRef = db.collection('users')
-        // Don't need to have the uid next to the pick in a special object
-        // since the pick has the picker's uid
         _usersWithPicksArray.forEach(userObject => {
           userObject.picksArray.forEach(pick => {
+            console.log('userObject.picksArray.forEach is starting')
+            let isCorrect = false
             let game = null
             gamesRef.doc(pick.gameId).get().then(doc => {
               game = doc.data()
               game.id = doc.id
             }).then(() => {
-              let isCorrect = false
               if (game && game.isFinal) {
                 isCorrect = game.result === 'TIE' || game.result === pick.teamId
                 if (isCorrect) {
@@ -123,6 +121,12 @@ export default {
                     isCorrect: false
                   })
                 }
+              }
+              console.log('userObject.picksArray.forEach is ending')
+            }).then(() => {
+              console.log('userObject.picksArray.forEach has ended')
+              if (isCorrect) {
+                userObject.userScore += correctCounter
               }
             })
           })
