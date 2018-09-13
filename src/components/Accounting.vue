@@ -48,7 +48,7 @@ export default {
     },
     submitScores () {
       // TODO validate the inputs are serving up numbers
-      let now = new Date()
+      // let now = new Date()
       let gamesRef = db.collection('games')
       this.gamesArray.forEach(game => {
         if (game.homeTeamScore && game.awayTeamScore && game.isFinal) {

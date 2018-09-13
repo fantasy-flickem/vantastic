@@ -1,8 +1,16 @@
 <template>
   <div class="l-content">
-    <div v-if='tribeUsersArray.length > 0' class="runner runner--with-bottom-border" style="min-height:60vh">
+    <div v-if='isFetchingData'>
+    </div>
+    <div v-else class="runner runner--with-bottom-border" style="position:relative; min-height:60vh;">
       <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Week {{ currentWeekNumber }} leaders</div>
-      <Competitor v-for='(tribeUser, index) in tribeUsersArray' :key='index' :competitor=tribeUser></Competitor>
+      <div v-for='(tribeUser, index) in tribeUsersArray' :key='index' class="text__row text__row--spaced-padding-1" style="margin-right:20px; margin-left:20px;">
+        <div class="text">{{ tribeUser.displayName }}</div>
+        <div class="text">{{ tribeUser.score }}</div>
+      </div>
+      <div v-if='user.isAdmin' class="button__group button__group--vertical" style="position:absolute; bottom:0; width:100%;">
+        <button class="button" @click='updateScores()'>Update scores</button>
+      </div>
     </div>
   </div>
 </template>
@@ -10,60 +18,33 @@
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
-import Competitor from './Competitor'
 export default {
   name: 'Leaderboard',
-  components: { Competitor },
   props: [ 'currentWeekNumber', 'user' ],
   data () {
     return {
-      currentDbUser: null,
-      tribeUsersArray: []
+      isFetchingData: true,
+      tribeUsersArray: [],
+      tribeUsersUnaccountedPicksArray: []
     }
   },
   created () {
-    // TODO calculate score for each user
-    //      and write it to the db unless it hasn't changed
-    console.log('Hi there. I\'ve got some information I\'d like to share with you:')
+    this.isFetchingData = true
     if (!this.user) {
-      console.log('It looks like you\'ve just refreshed the Leaderboard')
-      console.log('There is no this.user yet')
       let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid)
       userRef.get().then(snapshot => {
-        let profile = null
-        snapshot.forEach(doc => {
-          profile = doc.data()
-          profile.id = doc.id
-        })
-        this.currentDbUser = profile
-        console.log('this.user has now been set to', profile)
-        return profile
+        return this.getDbUser(snapshot)
       }).then(_profile => {
-        let tribeUsersRef = db.collection('users').where('tribeId', '==', this.currentDbUser.tribeId).orderBy('score', 'desc')
-        tribeUsersRef.get().then(snapshot => {
-          let tribeUsersArray = []
-          snapshot.forEach(doc => {
-            let tribeUser = doc.data()
-            tribeUser.id = doc.id
-            tribeUsersArray.push(tribeUser)
-          })
-          console.log('passing along tribeUsersArray', tribeUsersArray)
-          return tribeUsersArray
-        }).then((_tribeUsersArray) => {
-          let usersCorrectPicksRef = db.collection('picks').where('isCorrect', '==', true)
-          _tribeUsersArray.forEach(_user => {
-            usersCorrectPicksRef.where('uid', '==', _user.uid).get().then(snapshot => {
-              _user.currentScore = snapshot.size
-            })
-          })
-          console.log('this.tribeUsersArray has just been set to', _tribeUsersArray)
-          this.tribeUsersArray = _tribeUsersArray
-        })
+        this.fetchData(_profile)
       })
     } else {
-      console.log('It looks like you\'ve arrived here via in-app navigation')
-      console.log('this.user is currently set to', this.user)
-      let tribeUsersRef = db.collection('users').where('tribeId', '==', this.user.tribeId).orderBy('score', 'desc')
+      this.fetchData(this.user)
+    }
+  },
+  methods: {
+    fetchData (_profile) {
+      this.isFetchingData = true
+      let tribeUsersRef = db.collection('users').where('tribeId', '==', _profile.tribeId).orderBy('score', 'desc')
       tribeUsersRef.get().then(snapshot => {
         let tribeUsersArray = []
         snapshot.forEach(doc => {
@@ -71,17 +52,81 @@ export default {
           tribeUser.id = doc.id
           tribeUsersArray.push(tribeUser)
         })
-        console.log('passing along tribeUsersArray', this.tribeUsersArray)
-        return tribeUsersArray
-      }).then((_tribeUsersArray) => {
-        let usersCorrectPicksRef = db.collection('picks').where('isCorrect', '==', true)
-        _tribeUsersArray.forEach(_user => {
-          usersCorrectPicksRef.where('uid', '==', _user.uid).get().then(snapshot => {
-            _user.currentScore = snapshot.size
+        this.tribeUsersArray = tribeUsersArray
+        this.isFetchingData = false
+      })
+    },
+    getDbUser (_snapshot) {
+      let profile = null
+      _snapshot.forEach(doc => {
+        profile = doc.data()
+        profile.id = doc.id
+      })
+      return profile
+    },
+    updateScores () {
+      console.log('updateScores is firing')
+      let unaccountedPicksArray = []
+      let picksRef = db.collection('picks')
+      picksRef.where('isAccounted', '==', false).get().then(snapshot => {
+        snapshot.forEach(doc => {
+          let pick = doc.data()
+          pick.id = doc.id
+          unaccountedPicksArray.push(pick)
+        })
+        // [ {pick}, {pick}, {pick}, {pick}, {pick} ]
+        console.log('unaccountedPicksArray', unaccountedPicksArray)
+        return unaccountedPicksArray
+      }).then(_unaccountedPicksArray => {
+        let usersWithPicksArray = []
+        this.tribeUsersArray.forEach(tribeUser => {
+          let userWithPicksObject = {
+            uid: tribeUser.uid,
+            picksArray: []
+          }
+          console.log(tribeUser.uid)
+          let picksArray = _unaccountedPicksArray.filter(pick => pick.uid === tribeUser.uid)
+          userWithPicksObject.picksArray = picksArray
+          // TODO picksArray is coming up totally empty 100% of the time
+          usersWithPicksArray.push(userWithPicksObject)
+        })
+        console.log('usersWithPicksArray', usersWithPicksArray)
+        return usersWithPicksArray
+      }).then(_usersWithPicksArray => {
+        let gamesRef = db.collection('games')
+        let picksRef = db.collection('picks')
+        let usersRef = db.collection('users')
+        _usersWithPicksArray.forEach(userObject => {
+          userObject.picksArray.forEach(pick => {
+            let game = null
+            gamesRef.doc(pick.gameId).get().then(doc => {
+              console.log(doc.data())
+              game = doc.data()
+              game.id = doc.id
+            })
+            let isCorrect = false
+            if (game && game.result) {
+              console.log(game.result, pick.teamId)
+              isCorrect = game.result === "TIE" || game.result === pick.teamId
+            }
+            if (isCorrect) {
+              picksRef.doc(pick.id).update({
+                isAccounted: true,
+                isCorrect: true
+              }).then(() => {
+                usersRef.doc(userObject.id).update({
+                  score: userObject.score + 1
+                })
+              })
+            } else {
+              picksRef.doc(pick.id).update({
+                isAccounted: true,
+                isCorrect: false
+              })
+            }
           })
         })
-        console.log('this.tribeUsersArray has just been set to', _tribeUsersArray)
-        this.tribeUsersArray = _tribeUsersArray
+        console.log('updateScores is done firing')
       })
     }
   }
