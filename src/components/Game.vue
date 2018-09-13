@@ -48,40 +48,39 @@ export default {
   methods: {
     makeOrUpdatePick (_game, _teamId) {
       let isFavoriteTeamGame = this.gameGroupName === 'Favorite team game'
-      if (!this.gameStartTimeHasPassed) {
-        let currentUserUid = firebase.auth().currentUser.uid
-        let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
-        if (isFavoriteTeamGame) {
-          picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
-        }
-        picksRef.get()
-          .then(snapshot => {
-            let pick = null
-            snapshot.forEach(doc => {
-              pick = doc.data()
-              pick.id = doc.id
-            })
-            if (pick) {
-              if (pick.teamId !== _teamId) {
-                this.switchPick(_game)
-                db.collection('picks').doc(pick.id).update({
-                  teamId: _teamId
-                })
-              }
-            } else {
-              this.makePick(_game, _teamId)
-              db.collection('picks').add({
-                gameId: _game.id,
-                teamId: _teamId,
-                uid: currentUserUid,
-                isFavoriteTeamGame: isFavoriteTeamGame,
-                isAccounted: false,
-                isCorrect: false,
-                week: Number(this.currentlyViewedWeekNumber)
+
+      let currentUserUid = firebase.auth().currentUser.uid
+      let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
+      if (isFavoriteTeamGame) {
+        picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
+      }
+      picksRef.get()
+        .then(snapshot => {
+          let pick = null
+          snapshot.forEach(doc => {
+            pick = doc.data()
+            pick.id = doc.id
+          })
+          if (pick) {
+            if (pick.teamId !== _teamId) {
+              this.switchPick(_game)
+              db.collection('picks').doc(pick.id).update({
+                teamId: _teamId
               })
             }
-          })
-      }
+          } else {
+            this.makePick(_game, _teamId)
+            db.collection('picks').add({
+              gameId: _game.id,
+              teamId: _teamId,
+              uid: currentUserUid,
+              isFavoriteTeamGame: isFavoriteTeamGame,
+              isAccounted: false,
+              isCorrect: false,
+              week: Number(this.currentlyViewedWeekNumber)
+            })
+          }
+        })
     },
     makePick (_game, _teamId) {
       if (_teamId === _game.homeTeamId) { _game.homeTeamIsPicked = true }
