@@ -37,5 +37,14 @@
     bottom: 0;
     left: 0;
     background-color: $white;
+    border-top: $border $dk-blue;
+  }
+  // .l-absolute-center-input
+  &-absolute-center-input {
+    position: absolute;
+    top: calc(50% - (#{$input-height / 2}));
+    left: calc(50vw - (#{$input-height / 2}));
+    text-align: center;
+    pointer-events: none;
   }
 }

@@ -5,7 +5,7 @@
  *
  */
 
- .text {
+.text {
   line-height: $line-height;
   font-family: $app-text;
 
@@ -42,10 +42,10 @@
   // &--line-height-fs-extra-small{line-height:$fs-extra-small}
   // &--line-height-fs-small{line-height:$fs-small}
   // &--line-height-fs-small{line-height:$fs-small}
-  // &--line-height-fs-medium{line-height:$fs-medium}
+  &--line-height-fs-medium{line-height:$fs-medium}
   // &--line-height-fs-large{line-height:$fs-large}
   // &--line-height-fs-extra-large{line-height:$fs-extra-large}
-  // &--line-height-fs-mega-large{line-height:$fs-mega-large}
+  &--line-height-fs-mega-large{line-height:$fs-mega-large}
   // &--line-height-fs-hero{line-height:$fs-hero}
   // *** TEXT-ALIGN ***
   &--align-left{text-align:left}
@@ -64,6 +64,7 @@
   &--gray{color:$gray}
   &--dk-gray{color:$dk-gray}
   &--white{color:$white}
+  &--red{color:$red}
 
   // *** FLEX ***
   &--flex-auto{flex:1 1 auto;}
@@ -90,22 +91,12 @@
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  // .text--absolute-center
-  &--absolute-center {
-    width: $button-height;
-    height: $button-height;
-    line-height: $button-height;
-    position: absolute;
-    top: calc(50% - (#{$button-height / 2}));
-    left: calc(50vw - (#{$button-height / 2}));
-    text-align: center;
-    pointer-events: none;
-  }
 
   // Elements
   // .text__list
   &__list {
-    display: block;
+    display: flex;
+    flex-direction: column;
 
     // Modifiers
     // .text__list--spaced-padding-1

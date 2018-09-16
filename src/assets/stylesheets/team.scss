@@ -1,0 +1,39 @@
+/**
+ * TEAM
+
+ * Any functionless text on screen
+ *
+ */
+
+.team {
+  position: relative;
+  height: $team-height;
+  border: $border $dk-blue;
+
+  // Modifiers
+  // .team--away
+  &--away {
+    justify-content: flex-end;
+    padding-right: $padding-1;
+    border-top-left-radius: $team-height / 2;
+    border-bottom-left-radius: $team-height / 2;
+  }
+  // .team--home
+  &--home {
+    padding-left: $padding-1;
+    border-top-right-radius: $team-height / 2;
+    border-bottom-right-radius: $team-height / 2;
+  }
+  // .team--is-picked
+  &--is-picked {
+    border: $border-picked $dk-blue !important;
+  }
+  // .team--is-correct
+  &--is-correct {
+    background-color: $yellow;
+  }
+  // .team--is-incorrect
+  &--is-incorrect {
+    background-color: $gray;
+  }
+}

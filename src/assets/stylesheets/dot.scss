@@ -1,0 +1,16 @@
+/**
+ * DOT
+
+ * A small circle
+ * with optional text inside
+ *
+ */
+
+ .dot {
+  width: $input-height;
+  height: $input-height;
+  line-height: $input-height;
+  border: $border $dk-blue;
+  border-radius: $input-height / 2;
+  background-color: $white;
+}

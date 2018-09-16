@@ -16,19 +16,18 @@
 .game {
   display: flex;
   justify-content: space-between;
+  margin-right: -$padding-3;
+  margin-left: -$padding-3;
 
+  & > .button__group {
+    margin-top: 0;
+  }
+  
   // Elements
   // .game__group
   &__group {
-    & > .text {
-      border-bottom: $border $dk-blue;
-    }
-    .button {
-      padding: 0 $padding-1;
-      &__group {
-        border-top: none;
-        margin-top: 0;
-      }
+    & > .game + .game {
+      margin-top: $padding-1;
     }
   }
   // .game__input

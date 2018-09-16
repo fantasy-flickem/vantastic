@@ -1,17 +1,19 @@
 <template>
   <div class="l-content" style="margin-bottom:50px;">
-    <div class="runner">
+    <div class="runner" style="padding-bottom:20px;">
       <div v-if='isFetchingData' style="height:100vh">
       </div>
       <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
-        <div v-if='gameGroup.games' class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
-        <Game v-for='(game, index) in gameGroup.games' :key='index' :game=game :user=user :currentlyViewedWeekNumber=currentlyViewedWeekNumber :gameGroupName=gameGroup.name></Game>
+        <div class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
+        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_pick='gameObject.pick' :_user='user' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
       </div>
     </div>
     <div class="l-footer">
       <div class="button__group button__group--horizontal" style="margin-top:0;">
         <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Picks', params: { week_number: (decrementWeekNumber()) } }" class="button button--previous-week">Previous Week</router-link>
-        <div class="text text--fw-bold text--absolute-center">{{ currentlyViewedWeekNumber }}</div>
+        <div class="l-absolute-center-input dot">
+          <div class="text text--fw-bold text--line-height-input-height">{{ currentlyViewedWeekNumber }}</div>
+        </div>
         <router-link v-if='currentlyViewedWeekNumber < 17' :to="{ name: 'Picks', params: { week_number: (incrementWeekNumber()) } }" class="button button--next-week">Next Week</router-link>
       </div>
     </div>
@@ -41,111 +43,116 @@ export default {
       this.currentlyViewedWeekNumber = Number(_currentlyViewedWeek)
       let teamsRef = db.collection('teams')
       let gamesRef = db.collection('games').where('week', '==', _currentlyViewedWeek)
-      let picksRef = db.collection('picks')
-      let teams = []
       let games = []
+      let teams = []
+      let teamIdsArray = []
       teamsRef.get().then(snapshot => {
         snapshot.forEach(doc => {
           let team = doc.data()
           team.id = doc.id
+          teamIdsArray.push(team.id)
           teams.push(team)
         })
         this.teams = teams
-      }).then(() => {
+        return teamIdsArray
+      }).then(_teamIdsArray => {
         gamesRef.get().then(snapshot => {
           snapshot.forEach(doc => {
             let game = doc.data()
             game.id = doc.id
             if (!game.homeTeam && !game.awayTeam) {
-              this.teams.forEach((team) => {
-                if (team.id === game.homeTeamId) { game.homeTeam = team }
-                if (team.id === game.awayTeamId) { game.awayTeam = team }
-              })
+              if (!game.homeTeam) {
+                let homeTeamIndex = _teamIdsArray.indexOf(game.homeTeamId)
+                game.homeTeam = this.teams[homeTeamIndex]
+              }
+              if (!game.awayTeam) {
+                let awayTeamIndex = _teamIdsArray.indexOf(game.awayTeamId)
+                game.awayTeam = this.teams[awayTeamIndex]
+              }
             }
             games.push(game)
           })
           return games
         }).then(_games => {
-          let gamesArray = []
+          var promises = []
+          // I _think_ this.user will always exist when requested here
+          let picksRef = db.collection('picks').where('uid', '==', this.user.uid)
+          let gameObjects = []
           _games.forEach(game => {
-            let gameHasPick = false
-            picksRef.where('gameId', '==', game.id).where('uid', '==', this.user.uid).get().then(snapshot => {
-              snapshot.forEach(doc => {
-                let pick = doc.data()
-                pick.id = doc.id
-                if (pick.teamId === game.homeTeam.id) {
-                  game.homeTeamIsPicked = true
-                  game.homeTeamIsCorrect = pick.isCorrect
-                }
-                if (pick.teamId === game.awayTeam.id) {
-                  game.awayTeamIsPicked = true
-                  game.awayTeamIsCorrect = pick.isCorrect
-                }
-                gameHasPick = true
+            let gameObject = { game: game }
+            gameObjects.push(gameObject)
+          })
+          gameObjects.forEach(gameObject => {
+            promises.push(
+              picksRef.where('gameId', '==', gameObject.game.id).get().then(snapshot => {
+                snapshot.forEach(doc => {
+                  let pick = doc.data()
+                  pick.id = doc.id
+                  gameObject.pick = pick
+                })
+              }).then(() => {
+                return gameObject
               })
+            )
+          })
+          Promise.all(promises).then(values => {
+            return gameObjects
+          }).then(_gameObjects => {
+            let createGameGroupObject = (_gameGroupName, _gameGroupArray) => {
+              if (_gameGroupArray.length > 0) {
+                let gameGroupObject = { name: _gameGroupName + ' games' }
+                gameGroupObject.gameObjects = _gameGroupArray
+                return gameGroupObject
+              }
+            }
+            let thursdayGames = []
+            let saturdayGames = []
+            let sundayEarlyGames = []
+            let sundayLateGames = []
+            let mondayGames = []
+            // let favoriteTeamIsPlayingThisWeek = false
+            _gameObjects.forEach(gameObject => {
+              // if (gameObject.game.homeTeamId === this.user.favoriteTeamId || gameObject.game.awayTeamId === this.user.favoriteTeamId) {
+              //   favoriteTeamIsPlayingThisWeek = true
+              //   this.favoriteTeamGame = gameObject.game
+              // }
+              let startTime = gameObject.game.startTime.seconds * 1000
+              let gameDay = moment(startTime).format('dddd')
+              switch (gameDay) {
+                case 'Thursday':
+                  thursdayGames.push(gameObject)
+                  break
+                case 'Saturday':
+                  saturdayGames.push(gameObject)
+                  break
+                case 'Sunday':
+                  if (Number(moment(startTime).format('kk')) < 14) {
+                    sundayEarlyGames.push(gameObject)
+                  } else {
+                    sundayLateGames.push(gameObject)
+                  }
+                  break
+                case 'Monday':
+                  mondayGames.push(gameObject)
+                  break
+                default:
+                  break
+              }
             })
-            if (!gameHasPick) {
-              game.homeTeamIsPicked = false
-              game.awayTeamIsPicked = false
-            }
-            game.hasPick = gameHasPick
-            gamesArray.push(game)
-          })
-          this.games = gamesArray
-        }).then(() => {
-          let createGameGroupObject = (_gameGroupName, _gamesArray) => {
-            if (_gamesArray.length > 0) {
-              let gameGroupObject = { name: _gameGroupName + ' games' }
-              gameGroupObject.games = _gamesArray
-              return gameGroupObject
-            }
-          }
-          let thursdayGames = []
-          let saturdayGames = []
-          let sundayEarlyGames = []
-          let sundayLateGames = []
-          let mondayGames = []
-          // let favoriteTeamIsPlayingThisWeek = false
-          this.games.forEach(game => {
-            // if (game.homeTeamId === this.user.favoriteTeamId || game.awayTeamId === this.user.favoriteTeamId) {
-            //   favoriteTeamIsPlayingThisWeek = true
-            //   this.favoriteTeamGame = game
+            // if (!favoriteTeamIsPlayingThisWeek) {
+            //   this.favoriteTeamGame = null
             // }
-            let startTime = game.startTime.seconds * 1000
-            let gameDay = moment(startTime).format('dddd')
-            switch (gameDay) {
-              case 'Thursday':
-                thursdayGames.push(game)
-                break
-              case 'Saturday':
-                saturdayGames.push(game)
-                break
-              case 'Sunday':
-                if (Number(moment(startTime).format('kk')) < 14) {
-                  sundayEarlyGames.push(game)
-                } else {
-                  sundayLateGames.push(game)
-                }
-                break
-              case 'Monday':
-                mondayGames.push(game)
-                break
-              default:
-                break
-            }
+            let gameGroups = []
+            if (thursdayGames.length > 0) { gameGroups.push(createGameGroupObject('Thursday', thursdayGames)) }
+            if (saturdayGames.length > 0) { gameGroups.push(createGameGroupObject('Saturday', saturdayGames)) }
+            if (sundayEarlyGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames)) }
+            if (sundayLateGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames)) }
+            if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
+            // if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
+            this.gameGroups = gameGroups
+            console.log('gameGroups', this.gameGroups)
+            this.isFetchingData = false
           })
-          // if (!favoriteTeamIsPlayingThisWeek) {
-          //   this.favoriteTeamGame = null
-          // }
-          let gameGroups = []
-          if (thursdayGames.length > 0) { gameGroups.push(createGameGroupObject('Thursday', thursdayGames)) }
-          if (saturdayGames.length > 0) { gameGroups.push(createGameGroupObject('Saturday', saturdayGames)) }
-          if (sundayEarlyGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames)) }
-          if (sundayLateGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames)) }
-          if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
-          // if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
-          this.gameGroups = gameGroups
-          this.isFetchingData = false
         })
       })
     },
@@ -157,6 +164,7 @@ export default {
     }
   },
   created () {
+    console.log('Picks.created is firing')
     this.fetchData(Number(this.$route.params.week_number))
   },
   beforeRouteUpdate (to, from, next) {
