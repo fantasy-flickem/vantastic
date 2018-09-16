@@ -3,7 +3,7 @@
     <div v-if='isFetchingData'>
     </div>
     <div v-else class="button__group button__group--horizontal button__group--justify-content-space-between" style="width:100%;">
-      <Team :_team='_game.awayTeam' :_isHome=false :_isPicked='_game.awayTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.awayTeamIsPicked && _game.awayTeamScore >= _game.homeTeamScore' :_isIncorrect='_game.awayTeamIsPicked && _game.homeTeamScore > _game.awayTeamScore' :_score='_game.awayTeamScore' v-on:pick-team-by-id="makeOrUpdatePick(_game, $event)"></Team>
+      <Team :_team='_game.awayTeam' :_isHome=false :class='awayTeamClasses' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.awayTeamIsPicked && _game.awayTeamScore >= _game.homeTeamScore' :_isIncorrect='_game.awayTeamIsPicked && _game.homeTeamScore > _game.awayTeamScore' :_score='_game.awayTeamScore' v-on:pick-team-by-id="makeOrUpdatePick($event)"></Team>
       <button style="height:65px; background-color:#FCFEFF">
         <svg width="25" height="65" version="1" xmlns="http://www.w3.org/2000/svg">
           <rect x="0" y="0" width="25" height="12.5" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#B1012F"></rect>
@@ -14,7 +14,7 @@
           <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">75%</text>
         </svg>
       </button>
-      <Team :_team='_game.homeTeam' :_isHome=true :_isPicked='_game.homeTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.homeTeamIsPicked && _game.homeTeamScore >= _game.awayTeamScore' :_isIncorrect='_game.homeTeamIsPicked && _game.awayTeamScore > _game.homeTeamScore' :_score='_game.homeTeamScore' v-on:pick-team-by-id="makeOrUpdatePick(_game, $event)"></Team>
+      <Team :_team='_game.homeTeam' :_isHome=true :class='homeTeamClasses' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.homeTeamIsPicked && _game.homeTeamScore >= _game.awayTeamScore' :_isIncorrect='_game.homeTeamIsPicked && _game.awayTeamScore > _game.homeTeamScore' :_score='_game.homeTeamScore' v-on:pick-team-by-id="makeOrUpdatePick($event)"></Team>
     </div>
   </div>
 </template>
@@ -40,6 +40,34 @@ export default {
     }
   },
   computed: {
+    awayTeamClasses () {
+      let awayTeamPickednessClass = ''
+      let awayTeamCorrectnessClass = ''
+      if (this._game.awayTeamIsPicked) {
+        awayTeamPickednessClass = 'team--is-picked'
+        if (this._game.isFinal) {
+          this._game.awayTeamScore >= this._game.homeTeamScore ? awayTeamCorrectnessClass = 'team--is-correct' : awayTeamCorrectnessClass = 'team--is-incorrect'
+        }
+      }
+      return [
+        awayTeamPickednessClass,
+        awayTeamCorrectnessClass
+      ]
+    },
+    homeTeamClasses () {
+      let homeTeamPickednessClass = ''
+      let homeTeamCorrectnessClass = ''
+      if (this._game.homeTeamIsPicked) {
+        homeTeamPickednessClass = 'team--is-picked'
+        if (this._game.isFinal) {
+          this._game.homeTeamScore >= this._game.awayTeamScore ? homeTeamCorrectnessClass = 'team--is-correct' : homeTeamCorrectnessClass = 'team--is-incorrect'
+        }
+      }
+      return [
+        homeTeamPickednessClass,
+        homeTeamCorrectnessClass
+      ]
+    },
     gameStartTimeHasPassed () {
       let gameStartTime = moment(this._game.startTime.seconds * 1000)
       let now = moment()

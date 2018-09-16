@@ -1,5 +1,5 @@
 <template>
-  <button v-if=_isHome class="button team team--home" :class="{ 'team--is-picked': _isPicked, 'team--is-correct': _isCorrect, 'team--is-incorrect': _isIncorrect }" v-on:click="$emit('pick-team-by-id', _team.id)">
+  <button v-if=_isHome class="button team team--home" v-on:click="$emit('pick-team-by-id', _team.id)">
     <div class="text__list" style="align-items:flex-start; height:50px;">
       <div class="text text--handegg-text text--fs-tiny text--transform-uppercase">{{_team.id}} {{_team.name}}</div>
       <div v-if='_score' class="text text--handegg-text text--fs-hero text--line-height-fs-mega-large text--transform-uppercase">{{_score}}</div>
@@ -8,7 +8,7 @@
     </div>
     <Logo :_teamId='_team.id' :_isHome='_isHome'></Logo>
   </button>
-  <button v-else class="button team team--away" :class="{ 'team--is-picked': _isPicked, 'team--is-correct': _isCorrect, 'team--is-incorrect': _isIncorrect }" v-on:click="$emit('pick-team-by-id', _team.id)">
+  <button v-else class="button team team--away" v-on:click="$emit('pick-team-by-id', _team.id)">
     <Logo :_teamId='_team.id' :_isHome='_isHome'></Logo>
     <div class="text__list" style="align-items:flex-end; height:50px; margin-left:50px;">
       <div class="text text--handegg-text text--fs-tiny text--transform-uppercase">{{_team.id}} {{_team.name}}</div>
@@ -26,16 +26,12 @@ export default {
   components: { Logo },
   props: [
     '_hasStarted',
-    '_isCorrect',
     '_isHome',
-    '_isIncorrect',
-    '_isPicked',
     '_score',
     '_team'
   ],
   data () {
     return { }
-  },
-  created () { }
+  }
 }
 </script>
