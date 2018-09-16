@@ -3,7 +3,7 @@
     <div v-if='isFetchingData'>
     </div>
     <div v-else class="button__group button__group--horizontal button__group--justify-content-space-between" style="width:100%;">
-      <Team :_team='_game.awayTeam' :_isHome=false :_isPicked='_game.awayTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.awayTeamIsPicked && _game.awayTeamScore >= _game.homeTeamScore' :_isIncorrect='_game.awayTeamIsPicked && _game.homeTeamScore > _game.awayTeamScore' :_score='_game.awayTeamScore'></Team>
+      <Team :_team='_game.awayTeam' :_isHome=false :_isPicked='_game.awayTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.awayTeamIsPicked && _game.awayTeamScore >= _game.homeTeamScore' :_isIncorrect='_game.awayTeamIsPicked && _game.homeTeamScore > _game.awayTeamScore' :_score='_game.awayTeamScore' v-on:pick-team-by-id="makeOrUpdatePick(_game, $event)"></Team>
       <button style="height:65px; background-color:#FCFEFF">
         <svg width="25" height="65" version="1" xmlns="http://www.w3.org/2000/svg">
           <rect x="0" y="0" width="25" height="12.5" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#B1012F"></rect>
@@ -14,7 +14,7 @@
           <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">75%</text>
         </svg>
       </button>
-      <Team :_team='_game.homeTeam' :_isHome=true :_isPicked='_game.homeTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.homeTeamIsPicked && _game.homeTeamScore >= _game.awayTeamScore' :_isIncorrect='_game.homeTeamIsPicked && _game.awayTeamScore > _game.homeTeamScore' :_score='_game.homeTeamScore'></Team>
+      <Team :_team='_game.homeTeam' :_isHome=true :_isPicked='_game.homeTeamIsPicked' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.homeTeamIsPicked && _game.homeTeamScore >= _game.awayTeamScore' :_isIncorrect='_game.homeTeamIsPicked && _game.awayTeamScore > _game.homeTeamScore' :_score='_game.homeTeamScore' v-on:pick-team-by-id="makeOrUpdatePick(_game, $event)"></Team>
     </div>
   </div>
 </template>
@@ -53,6 +53,8 @@ export default {
       // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
       if (this.isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
+      } else {
+        this.isFavoriteTeamGame = false
       }
       picksRef.get().then(snapshot => {
         let pick = null
@@ -76,7 +78,7 @@ export default {
             isFavoriteTeamGame: this.isFavoriteTeamGame,
             isAccounted: false,
             isCorrect: false,
-            week: Number(this.currentlyViewedWeekNumber)
+            week: Number(this._currentlyViewedWeekNumber)
           })
         }
       })
