@@ -12,7 +12,7 @@
       </div>
       <div v-if='feedback' class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
       <div class="button__group button__group--vertical">
-        <button class="button">Enter</button>
+        <button class="button button--center-center">Enter</button>
       </div>
     </form>
   </div>

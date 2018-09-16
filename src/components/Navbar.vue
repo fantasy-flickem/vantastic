@@ -11,8 +11,8 @@
   </div>
   <div v-else class="l-navbar">
     <div class="button__group button__group--horizontal" style="margin:0;">
-      <router-link :to="{ name: 'Register' }" class="button">Register</router-link>
-      <router-link :to="{ name: 'Signin' }" class="button">Sign in</router-link>
+      <router-link :to="{ name: 'Register' }" class="button button--center-center button--border-none">Register</router-link>
+      <router-link :to="{ name: 'Signin' }" class="button button--center-center button--border-none">Sign in</router-link>
     </div>
   </div>
 </template>
