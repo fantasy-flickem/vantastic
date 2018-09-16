@@ -50,6 +50,7 @@ export default {
       // TODO validate the inputs are serving up numbers
       // let now = new Date()
       let gamesRef = db.collection('games')
+      // Promise.all
       this.gamesArray.forEach(game => {
         if (game.homeTeamScore && game.awayTeamScore && game.isFinal) {
           let isTie = game.homeTeamScore === game.awayTeamScore
