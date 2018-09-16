@@ -75,9 +75,9 @@ export default {
     }
   },
   methods: {
-    makeOrUpdatePick (_game, _teamId) {
+    makeOrUpdatePick (_teamId) {
       let currentUserUid = firebase.auth().currentUser.uid
-      let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
+      let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', currentUserUid)
       // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
       if (this.isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
@@ -92,15 +92,15 @@ export default {
         })
         if (pick) {
           if (pick.teamId !== _teamId) {
-            this.switchPick(_game)
+            this.switchPick()
             db.collection('picks').doc(pick.id).update({
               teamId: _teamId
             })
           }
         } else {
-          this.makePick(_game, _teamId)
+          this.makePick(_teamId)
           db.collection('picks').add({
-            gameId: _game.id,
+            gameId: this._game.id,
             teamId: _teamId,
             uid: currentUserUid,
             tribeId: this._user.tribeId,
@@ -112,19 +112,19 @@ export default {
         }
       })
     },
-    makePick (_game, _teamId) {
+    makePick (_teamId) {
       console.log('makePick is firing')
-      if (_teamId === _game.homeTeamId) { _game.homeTeamIsPicked = true }
-      if (_teamId === _game.awayTeamId) { _game.awayTeamIsPicked = true }
+      if (_teamId === this._game.homeTeamId) { this._game.homeTeamIsPicked = true }
+      if (_teamId === this._game.awayTeamId) { this._game.awayTeamIsPicked = true }
     },
-    switchPick (_game) {
-      console.log('switchPick is firing')
-      if (_game.homeTeamIsPicked) {
-        _game.homeTeamIsPicked = false
-        _game.awayTeamIsPicked = true
+    switchPick () {
+      console.log('switchPick is firing', this._game.homeTeamIsPicked)
+      if (this._game.homeTeamIsPicked) {
+        this._game.homeTeamIsPicked = false
+        this._game.awayTeamIsPicked = true
       } else {
-        _game.homeTeamIsPicked = true
-        _game.awayTeamIsPicked = false
+        this._game.homeTeamIsPicked = true
+        this._game.awayTeamIsPicked = false
       }
     },
     fetchData () {
