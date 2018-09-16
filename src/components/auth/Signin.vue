@@ -1,6 +1,6 @@
 <template>
   <div class="l-content">
-    <form @submit.prevent="signin" class="runner">
+    <form @submit.prevent='signin' class="runner">
       <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Sign in</div>
       <div class="input" style="margin-top:20px">
         <label for="email">Email</label>
@@ -10,7 +10,7 @@
         <label for="email">Password</label>
         <input id="password" type="password" v-model="password">
       </div>
-      <div v-if="feedback" class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
+      <div v-if='feedback' class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
       <div class="button__group button__group--vertical">
         <button class="button">Enter</button>
       </div>

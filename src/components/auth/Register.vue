@@ -25,7 +25,7 @@
         <label for="tribe-id">Group password</label>
         <input id="tribe-id" type="text" v-model="tribeId">
       </div>
-      <div v-if="feedback" class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
+      <div v-if='feedback' class="text" style="margin-top:20px; margin-left:20px;">{{ feedback }}</div>
       <div class="button__group button__group--vertical">
         <button class="button">Register</button>
       </div>
