@@ -75,6 +75,7 @@ export default {
             gameId: _game.id,
             teamId: _teamId,
             uid: currentUserUid,
+            tribeId: this._user.tribeId,
             isFavoriteTeamGame: this.isFavoriteTeamGame,
             isAccounted: false,
             isCorrect: false,
