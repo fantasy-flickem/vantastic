@@ -23,9 +23,9 @@ export default {
   props: [ 'currentWeekNumber', 'user' ],
   data () {
     return {
+      currentDbUser: null,
       isFetchingData: true,
-      tribeUsersArray: [],
-      tribeUsersUnaccountedPicksArray: []
+      tribeUsersArray: []
     }
   },
   created () {
@@ -33,9 +33,13 @@ export default {
     if (!this.user) {
       let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid)
       userRef.get().then(snapshot => {
-        return this.getDbUser(snapshot)
-      }).then(_profile => {
-        this.fetchData(_profile)
+        let profile = null
+        snapshot.forEach(doc => {
+          profile = doc.data()
+          profile.id = doc.id
+        })
+        this.currentDbUser = profile
+        this.fetchData(profile)
       })
     } else {
       this.fetchData(this.user)
@@ -56,80 +60,76 @@ export default {
         this.isFetchingData = false
       })
     },
-    getDbUser (_snapshot) {
-      let profile = null
-      _snapshot.forEach(doc => {
-        profile = doc.data()
-        profile.id = doc.id
-      })
-      return profile
-    },
     updateScores () {
+      this.isFetchingData = true
       let unaccountedPicksArray = []
-      let unaccountedPastPicksRef = db.collection('picks').where('isAccounted', '==', false)
-      unaccountedPastPicksRef.get().then(snapshot => {
+      let unaccountedPicksRef = db.collection('picks').where('isAccounted', '==', false)
+      unaccountedPicksRef.get().then(snapshot => {
         snapshot.forEach(doc => {
           let pick = doc.data()
           pick.id = doc.id
-          if (pick.week <= this.currentWeekNumber) {
-            unaccountedPicksArray.push(pick)
-          }
+          unaccountedPicksArray.push(pick)
         })
-        // [ {pick}, {pick}, {pick}, {pick}, {pick} ]
-        return unaccountedPicksArray
+        let unaccountedPastPicksArray = unaccountedPicksArray.filter(pick => pick.week < this.currentWeekNumber)
+        // [ { pick.uid: uid }, ... ]
+        return unaccountedPastPicksArray
       }).then(_unaccountedPicksArray => {
         let usersWithPicksArray = []
+        // I _think_ this.tribeUsersArray will always exist when requested here
         this.tribeUsersArray.forEach(tribeUser => {
           let userWithPicksObject = {
-            uid: tribeUser.uid,
-            userDbId: tribeUser.id,
-            userScore: tribeUser.score,
+            user: tribeUser,
             picksArray: []
           }
           let picksArray = _unaccountedPicksArray.filter(pick => pick.uid === tribeUser.uid)
           userWithPicksObject.picksArray = picksArray
           usersWithPicksArray.push(userWithPicksObject)
         })
+        // [ {
+        //   user: { user },
+        //   picksArray: [ { pick.id: id, pick.gameId: gameId }, ... ]
+        // }, ... ]
         return usersWithPicksArray
       }).then(_usersWithPicksArray => {
         let gamesRef = db.collection('games')
-        let picksRef = db.collection('picks')
-        let usersRef = db.collection('users')
-        _usersWithPicksArray.forEach(userObject => {
-          userObject.picksArray.forEach(pick => {
-            console.log('userObject.picksArray.forEach is starting')
-            let isCorrect = false
+        // let picksRef = db.collection('picks')
+        // TODO-scoring Remove the userWithPicksObject iterator?
+        var promises = []
+        _usersWithPicksArray.forEach(_userWithPicksObject => {
+          _userWithPicksObject.picksArray.forEach(_pick => {
             let game = null
-            gamesRef.doc(pick.gameId).get().then(doc => {
-              game = doc.data()
-              game.id = doc.id
-            }).then(() => {
-              if (game && game.isFinal) {
-                isCorrect = game.result === 'TIE' || game.result === pick.teamId
-                if (isCorrect) {
-                  picksRef.doc(pick.id).update({
-                    isAccounted: true,
-                    isCorrect: true
-                  }).then(() => {
-                    usersRef.doc(userObject.userDbId).update({
-                      score: userObject.userScore + 1
-                    })
-                  })
-                } else {
-                  picksRef.doc(pick.id).update({
-                    isAccounted: true,
-                    isCorrect: false
-                  })
+            promises.push(
+              gamesRef.doc(_pick.gameId).get().then(doc => {
+                game = doc.data()
+                game.id = doc.id
+
+                if (game.isFinal) {
+                  if (game.result === 'TIE' || game.result === _pick.teamId) {
+                    // picksRef.doc(_pick.id).update({ isAccounted: true, isCorrect: true })
+                    let correctValue = [ _userWithPicksObject.user.id, true ]
+                    return correctValue
+                  } else {
+                    // picksRef.doc(_pick.id).update({ isAccounted: true, isCorrect: false })
+                    return null
+                  }
                 }
-              }
-              console.log('userObject.picksArray.forEach is ending')
-            }).then(() => {
-              console.log('userObject.picksArray.forEach has ended')
-              if (isCorrect) {
-                userObject.userScore += correctCounter
-              }
-            })
+              })
+            )
           })
+        })
+        Promise.all(promises).then(values => {
+          // Find out how many points each user gets
+          // Get each user
+          // let userScore = null
+          // let usersRef = db.collection('users').doc(userWithPicksObject.id)
+          // usersRef.get().then(doc => {
+          //   userScore = doc.data().score
+          // })
+          // .update?
+          // Update each user's score to be user.score + totalPoints
+          // userWithPicksObject.userScore = userScore + Number(isCorrect)
+          values.forEach(value => { })
+          this.isFetchingData = false
         })
       })
     }
