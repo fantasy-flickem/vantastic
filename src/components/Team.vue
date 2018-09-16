@@ -36,8 +36,6 @@ export default {
   data () {
     return { }
   },
-  created () {
-    console.log('Team.created is firing', this._team)
-  }
+  created () { }
 }
 </script>

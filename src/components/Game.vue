@@ -48,9 +48,9 @@ export default {
   },
   methods: {
     makeOrUpdatePick (_game, _teamId) {
-      console.log('makeOrUpdatePick is firing', _game, _teamId)
       let currentUserUid = firebase.auth().currentUser.uid
       let picksRef = db.collection('picks').where('gameId', '==', _game.id).where('uid', '==', currentUserUid)
+      // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
       if (this.isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
       }

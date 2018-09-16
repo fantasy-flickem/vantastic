@@ -379,8 +379,6 @@ export default {
       return this.teamDimensionsDictionary[_teamId]
     }
   },
-  created () {
-    console.log('Logo.created is firing', this._teamId)
-  }
+  created () { }
 }
 </script>

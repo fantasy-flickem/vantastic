@@ -75,6 +75,8 @@ export default {
           return games
         }).then(_games => {
           var promises = []
+          // Let's get all the picks here, and filter out the uid matches
+          // That way we can have an array of game/all tribe picks to show in the middle
           // I _think_ this.user will always exist when requested here
           let picksRef = db.collection('picks').where('uid', '==', this.user.uid)
           let gameObjects = []
