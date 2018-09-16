@@ -85,10 +85,12 @@ export default {
       })
     },
     makePick (_game, _teamId) {
+      console.log('makePick is firing')
       if (_teamId === _game.homeTeamId) { _game.homeTeamIsPicked = true }
       if (_teamId === _game.awayTeamId) { _game.awayTeamIsPicked = true }
     },
     switchPick (_game) {
+      console.log('switchPick is firing')
       if (_game.homeTeamIsPicked) {
         _game.homeTeamIsPicked = false
         _game.awayTeamIsPicked = true
