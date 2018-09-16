@@ -17,7 +17,7 @@
         <div class="text" style="padding:10px 20px 0;">{{ this.user.favoriteTeamId }}</div>
       </div>
       <div class="button__group button__group--vertical">
-        <button class="button">Update my settings</button>
+        <button class="button button--center-center">Update my settings</button>
       </div>
     </form>
   </div>
