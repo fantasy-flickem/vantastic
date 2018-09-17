@@ -1,7 +1,7 @@
 <template>
   <div class="game">
     <div class="button__group button__group--horizontal button__group--justify-content-space-between" style="width:100%;">
-      <Team :_team='_game.awayTeam' :_game='_game' :_pick='pick' :_user='_user' :_score='_game.awayTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
+      <Team :_team='_game.awayTeam' :_game='_game' :_pick='pick' :_score='_game.awayTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
       <!-- <button style="height:65px; background-color:#FCFEFF">
         <svg width="25" height="65" version="1" xmlns="http://www.w3.org/2000/svg">
           <rect x="0" y="0" width="25" height="12.5" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#B1012F"></rect>
@@ -12,7 +12,7 @@
           <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">75%</text>
         </svg>
       </button> -->
-      <Team :_team='_game.homeTeam' :_game='_game' :_pick='pick' :_user='_user' :_score='_game.homeTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
+      <Team :_team='_game.homeTeam' :_game='_game' :_pick='pick' :_score='_game.homeTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
     </div>
   </div>
 </template>
