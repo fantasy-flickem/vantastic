@@ -1,10 +1,8 @@
 <template>
   <div class="game">
-    <div v-if='isFetchingData'>
-    </div>
-    <div v-else class="button__group button__group--horizontal button__group--justify-content-space-between" style="width:100%;">
-      <Team :_team='_game.awayTeam' :_isHome=false :class='awayTeamClasses' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.awayTeamIsPicked && _game.awayTeamScore >= _game.homeTeamScore' :_isIncorrect='_game.awayTeamIsPicked && _game.homeTeamScore > _game.awayTeamScore' :_score='_game.awayTeamScore' v-on:pick-team-by-id="makeOrUpdatePick($event)"></Team>
-      <button style="height:65px; background-color:#FCFEFF">
+    <div class="button__group button__group--horizontal button__group--justify-content-space-between" style="width:100%;">
+      <Team :_team='_game.awayTeam' :_game='_game' :_pick='pick' :_user='_user' :_score='_game.awayTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
+      <!-- <button style="height:65px; background-color:#FCFEFF">
         <svg width="25" height="65" version="1" xmlns="http://www.w3.org/2000/svg">
           <rect x="0" y="0" width="25" height="12.5" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#B1012F"></rect>
           <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">25%</text>
@@ -13,8 +11,8 @@
           <rect x="0" y="0" width="25" height="37.5" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#428FC1"></rect>
           <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">75%</text>
         </svg>
-      </button>
-      <Team :_team='_game.homeTeam' :_isHome=true :class='homeTeamClasses' :_hasStarted='gameStartTimeHasPassed' :_isCorrect='_game.homeTeamIsPicked && _game.homeTeamScore >= _game.awayTeamScore' :_isIncorrect='_game.homeTeamIsPicked && _game.awayTeamScore > _game.homeTeamScore' :_score='_game.homeTeamScore' v-on:pick-team-by-id="makeOrUpdatePick($event)"></Team>
+      </button> -->
+      <Team :_team='_game.homeTeam' :_game='_game' :_pick='pick' :_user='_user' :_score='_game.homeTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
     </div>
   </div>
 </template>
@@ -22,7 +20,6 @@
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
-import moment from 'moment'
 import Team from './Team'
 export default {
   name: 'Game',
@@ -36,42 +33,7 @@ export default {
   ],
   data () {
     return {
-      isFetchingData: true
-    }
-  },
-  computed: {
-    awayTeamClasses () {
-      let awayTeamPickednessClass = ''
-      let awayTeamCorrectnessClass = ''
-      if (this._game.awayTeamIsPicked) {
-        awayTeamPickednessClass = 'team--is-picked'
-        if (this._game.isFinal) {
-          this._game.awayTeamScore >= this._game.homeTeamScore ? awayTeamCorrectnessClass = 'team--is-correct' : awayTeamCorrectnessClass = 'team--is-incorrect'
-        }
-      }
-      return [
-        awayTeamPickednessClass,
-        awayTeamCorrectnessClass
-      ]
-    },
-    homeTeamClasses () {
-      let homeTeamPickednessClass = ''
-      let homeTeamCorrectnessClass = ''
-      if (this._game.homeTeamIsPicked) {
-        homeTeamPickednessClass = 'team--is-picked'
-        if (this._game.isFinal) {
-          this._game.homeTeamScore >= this._game.awayTeamScore ? homeTeamCorrectnessClass = 'team--is-correct' : homeTeamCorrectnessClass = 'team--is-incorrect'
-        }
-      }
-      return [
-        homeTeamPickednessClass,
-        homeTeamCorrectnessClass
-      ]
-    },
-    gameStartTimeHasPassed () {
-      let gameStartTime = moment(this._game.startTime.seconds * 1000)
-      let now = moment()
-      return gameStartTime.diff(now) < 0
+      pick: this._pick
     }
   },
   methods: {
@@ -79,6 +41,7 @@ export default {
       let currentUserUid = firebase.auth().currentUser.uid
       let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', currentUserUid)
       // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
+      // TODO Add favoriteTeamGame selection back in
       if (this.isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
       } else {
@@ -92,14 +55,13 @@ export default {
         })
         if (pick) {
           if (pick.teamId !== _teamId) {
-            this.switchPick()
+            this.pick.teamId = _teamId
             db.collection('picks').doc(pick.id).update({
               teamId: _teamId
             })
           }
         } else {
-          this.makePick(_teamId)
-          db.collection('picks').add({
+          let newPick = {
             gameId: this._game.id,
             teamId: _teamId,
             uid: currentUserUid,
@@ -108,42 +70,12 @@ export default {
             isAccounted: false,
             isCorrect: false,
             week: Number(this._currentlyViewedWeekNumber)
-          })
+          }
+          this.pick = newPick
+          db.collection('picks').add(newPick)
         }
       })
-    },
-    makePick (_teamId) {
-      console.log('makePick is firing')
-      if (_teamId === this._game.homeTeamId) { this._game.homeTeamIsPicked = true }
-      if (_teamId === this._game.awayTeamId) { this._game.awayTeamIsPicked = true }
-    },
-    switchPick () {
-      console.log('switchPick is firing', this._game.homeTeamIsPicked)
-      if (this._game.homeTeamIsPicked) {
-        this._game.homeTeamIsPicked = false
-        this._game.awayTeamIsPicked = true
-      } else {
-        this._game.homeTeamIsPicked = true
-        this._game.awayTeamIsPicked = false
-      }
-    },
-    fetchData () {
-      this.isFetchingData = true
-      if (this._pick) {
-        if (this._pick.teamId === this._game.homeTeam.id) {
-          this._game.homeTeamIsPicked = true
-          this._game.homeTeamIsCorrect = this._pick.isCorrect
-        }
-        if (this._pick.teamId === this._game.awayTeam.id) {
-          this._game.awayTeamIsPicked = true
-          this._game.awayTeamIsCorrect = this._pick.isCorrect
-        }
-      }
-      this.isFetchingData = false
     }
-  },
-  created () {
-    this.fetchData()
   }
 }
 </script>

@@ -166,7 +166,6 @@ export default {
     }
   },
   created () {
-    console.log('Picks.created is firing')
     this.fetchData(Number(this.$route.params.week_number))
   },
   beforeRouteUpdate (to, from, next) {

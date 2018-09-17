@@ -11,15 +11,15 @@
   border: $border $dk-blue;
 
   // Modifiers
-  // .team--away
-  &--away {
+  // .team--is-away
+  &--is-away {
     justify-content: flex-end;
     padding-right: $padding-1;
     border-top-left-radius: $team-height / 2;
     border-bottom-left-radius: $team-height / 2;
   }
-  // .team--home
-  &--home {
+  // .team--is-home
+  &--is-home {
     padding-left: $padding-1;
     border-top-right-radius: $team-height / 2;
     border-bottom-right-radius: $team-height / 2;
