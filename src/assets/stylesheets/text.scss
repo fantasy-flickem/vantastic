@@ -105,19 +105,6 @@
     &--spaced-padding-2 { & > .text + .text { padding-top: $padding-2; } }
     // .text__list--spaced-padding-3
     &--spaced-padding-3 { & > .text + .text { padding-top: $padding-3; } }
-
-    // Container
-    // .text__lists
-    &s {
-      // Modifiers
-      // .text__lists--border-separated
-      &--border-separated {
-        & > .text__list + .text__list { border-top: 1px solid $lt-gray; }
-        // @include respond-to(mobile) { border: none; }
-      }
-      // .text__lists--spaced-padding-2
-      &--spaced-padding-2 { & > .text__list + .text__list { margin-top: $padding-2; } }
-    }
   }
   // .text__row
   &__row {

@@ -378,7 +378,6 @@ export default {
     getDimensions (_teamId) {
       return this.teamDimensionsDictionary[_teamId]
     }
-  },
-  created () { }
+  }
 }
 </script>
