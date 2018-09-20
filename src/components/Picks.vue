@@ -166,7 +166,6 @@ export default {
               if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
               // if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
               this.gameGroups = gameGroups
-              console.log('gameGroups', this.gameGroups)
               this.isFetchingData = false
             })
           })

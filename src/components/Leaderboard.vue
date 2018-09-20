@@ -9,7 +9,7 @@
         <div class="text">{{ tribeUser.score }}</div>
       </div>
       <div v-if='user.isAdmin' class="button__group button__group--vertical" style="position:absolute; bottom:0; width:100%;">
-        <button class="button button--center-center" @click='updateScores()'>Update scores</button>
+        <button class="button button--center-center" @click='updateScores'>Update scores</button>
       </div>
     </div>
   </div>
