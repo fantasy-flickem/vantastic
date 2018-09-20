@@ -5,7 +5,7 @@
       </div>
       <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
         <div class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
-        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_pick='gameObject.pick' :_user='user' :_userNameDictionary='userNameDictionary' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
+        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_myPick='gameObject.myPick' :_tribePicks='gameObject.tribePicks' :_user='user' :_userNameDictionary='userNameDictionary' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
       </div>
     </div>
     <div class="l-footer">
@@ -86,19 +86,25 @@ export default {
             return games
           }).then(_games => {
             var promises = []
-            let picksRef = db.collection('picks').where('uid', '==', this.user.uid)
+            let picksRef = db.collection('picks').where('tribeId', '==', this.user.tribeId)
             let gameObjects = []
             _games.forEach(game => {
               let gameObject = { game: game }
               gameObjects.push(gameObject)
             })
             gameObjects.forEach(gameObject => {
+              gameObject.tribePicks = []
               promises.push(
                 picksRef.where('gameId', '==', gameObject.game.id).get().then(snapshot => {
                   snapshot.forEach(doc => {
                     let pick = doc.data()
                     pick.id = doc.id
-                    gameObject.pick = pick
+                    if (pick.uid === this.user.uid) {
+                      gameObject.myPick = pick
+                      gameObject.tribePicks.push(pick)
+                    } else {
+                      gameObject.tribePicks.push(pick)
+                    }
                   })
                 }).then(() => {
                   return gameObject
