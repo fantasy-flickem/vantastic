@@ -1,0 +1,41 @@
+/**
+ * CALLOUT
+
+ * Any functionless text on screen
+ *
+ */
+
+.callout {
+  display: none;
+  position: absolute;
+  top: 75px;
+  left: 0;
+  width: 100%;
+  background-color: $white;
+  border: $border $blue;
+  z-index: $z-ui-middle;
+
+  &.open {
+    display: block;
+  }
+
+  // Elements
+  // .callout__content
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    padding: $padding-1 $padding-2;
+  }
+  // .callout__home-pickers
+  &__home-pickers {
+
+  }
+  // .callout__away-pickers
+  &__away-pickers {
+
+  }
+  
+  // Modifiers
+  // .callout--is-open
+  &--is-open { position: relative; }
+}
