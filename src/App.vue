@@ -1,5 +1,5 @@
 <template>
-  <div style="display:flex; flex-direction:column;">
+  <div id="vantastic" style="display:flex; flex-direction:column;">
     <Navbar :currentWeekNumber=this.currentWeekNumber />
     <router-view :user=this.user :currentWeekNumber=this.currentWeekNumber />
   </div>
@@ -58,6 +58,7 @@ export default {
   @import 'src/assets/stylesheets/lib/_base.scss';
   @import 'src/assets/stylesheets/_layout.scss';
   @import 'src/assets/stylesheets/button.scss';
+  @import 'src/assets/stylesheets/callout.scss';
   @import 'src/assets/stylesheets/dot.scss';
   @import 'src/assets/stylesheets/game.scss';
   @import 'src/assets/stylesheets/input.scss';

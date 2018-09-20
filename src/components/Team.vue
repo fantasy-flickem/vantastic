@@ -18,7 +18,7 @@ export default {
   components: { Logo },
   props: [
     '_game',
-    '_pick',
+    '_myPick',
     '_score',
     '_team'
   ],
@@ -38,10 +38,10 @@ export default {
       let teamPickednessClass = ''
       let teamCorrectnessClass = ''
       let teamLocationAdvantageClass = ''
-      if (this._pick && this._pick.teamId === this._team.id) {
+      if (this._myPick && this._myPick.teamId === this._team.id) {
         teamPickednessClass = 'team--is-picked'
         if (this._game.isFinal) {
-          teamCorrectnessClass = this._pick.isCorrect ? 'team--is-correct' : 'team--is-incorrect'
+          teamCorrectnessClass = this._myPick.isCorrect ? 'team--is-correct' : 'team--is-incorrect'
         }
       } else {
         teamPickednessClass = ''
