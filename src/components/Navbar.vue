@@ -6,7 +6,7 @@
       <router-link :to="{ name: 'Picks', params: { week_number: currentWeekNumber } }" class="button button--center-center button--border-none">Picks</router-link>
       <router-link :to="{ name: 'Leaderboard' }" class="button button--center-center button--border-none">Leaderboard</router-link>
       <router-link :to="{ name: 'Settings', params: { uid: authUser.uid } }" class="button button--center-center button--border-none">Settings</router-link>
-      <button @click='logout()' class="button button--center-center button--border-none">Logout</button>
+      <button @click='logout' class="button button--center-center button--border-none">Logout</button>
     </div>
   </div>
   <div v-else class="l-navbar">
