@@ -25,13 +25,15 @@
 
 <script>
 import db from '@/firebase/init'
+import firebase from 'firebase'
 export default {
   name: 'Settings',
-  props: [ 'currentWeekNumber', 'user' ],
+  props: [ 'currentWeekNumber' ],
   data () {
     return {
       feedback: null,
-      favoriteTeam: null
+      favoriteTeam: null,
+      user: null
     }
   },
   methods: {
@@ -51,6 +53,14 @@ export default {
     }
   },
   created () {
+    let userRef = db.collection('users').where('uid', '==', firebase.auth().currentUser.uid)
+    userRef.get().then(snapshot => {
+      snapshot.forEach(doc => {
+        let user = doc.data()
+        user.id = doc.id
+        this.user = user
+      })
+    })
   }
 }
 </script>
