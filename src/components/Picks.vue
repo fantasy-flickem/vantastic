@@ -5,10 +5,20 @@
       </div>
       <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
         <div class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
-        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_myPick='gameObject.myPick' :_tribePicks='gameObject.tribePicks' :_user='user' :_userNameDictionary='userNameDictionary' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
+        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_adminOverrideObject='adminOverrideObject' :_myPick='gameObject.myPick' :_tribePicks='gameObject.tribePicks' :_user='user' :_userNameDictionary='userNameDictionary' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
       </div>
     </div>
     <div class="l-footer">
+      <div v-if='user.isAdmin' class="button__group button__group--horizontal">
+        <div class="input" style="margin-top:20px;">
+          <label for="displayName">uid</label>
+          <input id="displayName" type="text" v-model="adminOverrideObject.uid">
+        </div>
+        <div class="input" style="margin-top:20px;">
+          <label for="displayName">tribeId</label>
+          <input id="displayName" type="text" v-model="adminOverrideObject.tribeId">
+        </div>
+      </div>
       <div class="button__group button__group--horizontal" style="margin-top:0;">
         <router-link v-if='currentlyViewedWeekNumber > 1' :to="{ name: 'Picks', params: { week_number: (decrementWeekNumber()) } }" class="button button--previous-week">Previous Week</router-link>
         <div class="l-absolute-center-input dot">
@@ -30,6 +40,7 @@ export default {
   props: [ 'user' ],
   data () {
     return {
+      adminOverrideObject: {uid: null, tribeId: null},
       currentlyViewedWeekNumber: null,
       // favoriteTeamGame: null,
       gameGroups: [],
@@ -86,7 +97,6 @@ export default {
             return games
           }).then(_games => {
             var promises = []
-            let picksRef = db.collection('picks').where('tribeId', '==', this.user.tribeId)
             let gameObjects = []
             _games.forEach(game => {
               let gameObject = { game: game }
@@ -94,12 +104,15 @@ export default {
             })
             gameObjects.forEach(gameObject => {
               gameObject.tribePicks = []
+              let userUid = this.user.uid
+              let tribeId = this.user.tribeId
+              let picksRef = db.collection('picks').where('tribeId', '==', tribeId)
               promises.push(
                 picksRef.where('gameId', '==', gameObject.game.id).get().then(snapshot => {
                   snapshot.forEach(doc => {
                     let pick = doc.data()
                     pick.id = doc.id
-                    if (pick.uid === this.user.uid) {
+                    if (pick.uid === userUid) {
                       gameObject.myPick = pick
                       gameObject.tribePicks.push(pick)
                     } else {

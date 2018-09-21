@@ -17,6 +17,7 @@ export default {
   name: 'Game',
   components: { Picksplit, Team },
   props: [
+    '_adminOverrideObject',
     '_currentlyViewedWeekNumber',
     '_game',
     '_isFavoriteTeamGame',
@@ -33,8 +34,13 @@ export default {
   },
   methods: {
     makeOrUpdatePick (_teamId) {
-      let currentUserUid = firebase.auth().currentUser.uid
-      let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', currentUserUid)
+      let selectedUserUid = firebase.auth().currentUser.uid
+      let selectedTribeId = this._user.tribeId
+      if (this._adminOverrideObject.uid && this._adminOverrideObject.tribeId) {
+        selectedUserUid = this._adminOverrideObject.uid
+        selectedTribeId = this._adminOverrideObject.tribeId
+      }
+      let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', selectedUserUid)
       // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
       // TODO Add favoriteTeamGame selection back in
       if (this.isFavoriteTeamGame) {
@@ -59,8 +65,8 @@ export default {
           let newPick = {
             gameId: this._game.id,
             teamId: _teamId,
-            uid: currentUserUid,
-            tribeId: this._user.tribeId,
+            uid: selectedUserUid,
+            tribeId: selectedTribeId,
             isFavoriteTeamGame: this.isFavoriteTeamGame,
             isAccounted: false,
             isCorrect: false,
