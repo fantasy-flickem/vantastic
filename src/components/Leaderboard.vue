@@ -63,7 +63,7 @@ export default {
     updateScores () {
       this.isFetchingData = true
       let unaccountedPicksArray = []
-      let unaccountedPicksRef = db.collection('picks').where('isAccounted', '==', false)
+      let unaccountedPicksRef = db.collection('picks').where('isAccounted', '==', false).where('tribeId', '==', this.user.tribeId)
       unaccountedPicksRef.get().then(snapshot => {
         snapshot.forEach(doc => {
           let pick = doc.data()
@@ -71,9 +71,6 @@ export default {
           unaccountedPicksArray.push(pick)
         })
         let unaccountedPastPicksArray = unaccountedPicksArray.filter(pick => pick.week < this.currentWeekNumber)
-        // [ { pick.uid: uid }, ... ]
-        return unaccountedPastPicksArray
-      }).then(_unaccountedPicksArray => {
         let usersWithPicksArray = []
         // I _think_ this.tribeUsersArray will always exist when requested here
         this.tribeUsersArray.forEach(tribeUser => {
@@ -81,55 +78,75 @@ export default {
             user: tribeUser,
             picksArray: []
           }
-          let picksArray = _unaccountedPicksArray.filter(pick => pick.uid === tribeUser.uid)
+          let picksArray = unaccountedPastPicksArray.filter(pick => pick.uid === tribeUser.uid)
           userWithPicksObject.picksArray = picksArray
           usersWithPicksArray.push(userWithPicksObject)
         })
-        // [ {
-        //   user: { user },
-        //   picksArray: [ { pick.id: id, pick.gameId: gameId }, ... ]
-        // }, ... ]
         return usersWithPicksArray
       }).then(_usersWithPicksArray => {
         let gamesRef = db.collection('games')
-        // let picksRef = db.collection('picks')
-        // TODO-scoring Remove the userWithPicksObject iterator?
-        var promises = []
+        let promises = []
+        let userScoreObjectArray = []
         _usersWithPicksArray.forEach(_userWithPicksObject => {
+          let userScoreObject = {
+            dbid: _userWithPicksObject.user.id,
+            score: _userWithPicksObject.user.score
+          }
+          userScoreObjectArray.push(userScoreObject)
           _userWithPicksObject.picksArray.forEach(_pick => {
             let game = null
             promises.push(
               gamesRef.doc(_pick.gameId).get().then(doc => {
                 game = doc.data()
                 game.id = doc.id
-
                 if (game.isFinal) {
                   if (game.result === 'TIE' || game.result === _pick.teamId) {
-                    // picksRef.doc(_pick.id).update({ isAccounted: true, isCorrect: true })
-                    let correctValue = [ _userWithPicksObject.user.id, true ]
-                    return correctValue
+                    _pick.isCorrect = true
                   } else {
-                    // picksRef.doc(_pick.id).update({ isAccounted: true, isCorrect: false })
-                    return null
+                    _pick.isCorrect = false
                   }
+                  _pick.dbid = _userWithPicksObject.user.id
+                  return _pick
+                }
+              }).then(_pick => {
+                let picksRef = db.collection('picks').doc(_pick.id)
+                if (_pick.isCorrect) {
+                  picksRef.update({
+                    isAccounted: true,
+                    isCorrect: true
+                  })
+                  return _pick.dbid
+                } else {
+                  picksRef.update({
+                    isAccounted: true,
+                    isCorrect: false
+                  })
+                  return null
                 }
               })
             )
           })
         })
+        this.userScoreObjectArray = userScoreObjectArray
         Promise.all(promises).then(values => {
-          // Find out how many points each user gets
-          // Get each user
-          // let userScore = null
-          // let usersRef = db.collection('users').doc(userWithPicksObject.id)
-          // usersRef.get().then(doc => {
-          //   userScore = doc.data().score
-          // })
-          // .update?
-          // Update each user's score to be user.score + totalPoints
-          // userWithPicksObject.userScore = userScore + Number(isCorrect)
-          values.forEach(value => { })
-          this.isFetchingData = false
+          // Update each user's score in 'users'
+          this.tribeUsersArray.forEach(tribeUser => {
+            let userScoreObject = this.userScoreObjectArray.find(obj => { return obj.dbid === tribeUser.id })
+            userScoreObject.score = tribeUser.score + values.filter(dbid => dbid === tribeUser.id).length
+            tribeUser.score = tribeUser.score + values.filter(dbid => dbid === tribeUser.id).length
+          })
+          let userRef = db.collection('users')
+          let promises = []
+          this.userScoreObjectArray.forEach(user => {
+            promises.push(
+              userRef.doc(user.dbid).update({
+                score: user.score
+              })
+            )
+          })
+          Promise.all(promises).then(values => {
+            this.isFetchingData = false
+          })
         })
       })
     }
