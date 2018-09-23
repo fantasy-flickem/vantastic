@@ -1,6 +1,6 @@
 <template>
-  <div class="picksplit" style="height:65px;">
-    <button style="height:65px; background-color:#FCFEFF" @click.stop.prevent='displayPicksplitByName'>
+  <div class="picksplit" style="height:65px; max-width:50px;">
+    <button style="display:flex; justify-content:space-between; height:65px; background-color:#FCFEFF" @click.stop.prevent='displayPicksplitByName'>
       <svg width="25" height="65" version="1" xmlns="http://www.w3.org/2000/svg">
         <rect x="0" y="0" width="25" :height="awayBarHeight" transform="rotate(180, 12.5, 32.5) translate(0, 15)" fill="#B1012F"></rect>
         <text x="12.5" y="65" text-anchor="middle" class="text text--handegg-text text--fs-extra-small">{{ _tribePicks.away.length }}</text>
