@@ -9,6 +9,7 @@
   position: relative;
   height: $team-height;
   border: $border $dk-blue;
+  max-width: calc(50vw - 37px);
 
   // Modifiers
   // .team--is-away
