@@ -36,9 +36,11 @@ export default {
     makeOrUpdatePick (_teamId) {
       let selectedUserUid = firebase.auth().currentUser.uid
       let selectedTribeId = this._user.tribeId
+      let isAdminOverriding = false
       if (this._adminOverrideObject.uid && this._adminOverrideObject.tribeId) {
         selectedUserUid = this._adminOverrideObject.uid
         selectedTribeId = this._adminOverrideObject.tribeId
+        isAdminOverriding = true
       }
       let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', selectedUserUid)
       // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
@@ -56,7 +58,7 @@ export default {
         })
         if (pick) {
           if (pick.teamId !== _teamId) {
-            this.myPick.teamId = _teamId
+            if (!isAdminOverriding) { this.myPick.teamId = _teamId }
             db.collection('picks').doc(pick.id).update({
               teamId: _teamId
             })
@@ -72,7 +74,7 @@ export default {
             isCorrect: false,
             week: Number(this._currentlyViewedWeekNumber)
           }
-          this.myPick = newPick
+          if (!isAdminOverriding) { this.myPick = newPick }
           db.collection('picks').add(newPick)
         }
       })

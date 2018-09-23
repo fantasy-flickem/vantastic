@@ -10,6 +10,7 @@
       </div>
       <div v-if='user.isAdmin' class="button__group button__group--vertical" style="position:absolute; bottom:0; width:100%;">
         <button class="button button--center-center" @click='updateScores'>Update scores</button>
+        <button class="button button--center-center" @click='unaccountAllPicks'>Unaccount all picks</button>
       </div>
     </div>
   </div>
@@ -58,6 +59,21 @@ export default {
         })
         this.tribeUsersArray = tribeUsersArray
         this.isFetchingData = false
+      })
+    },
+    unaccountAllPicks () {
+      let picksArray = []
+      let picksRef = db.collection('picks').where('isAccounted', '==', true)
+      picksRef.get().then(snapshot => {
+        snapshot.forEach(doc => {
+          let pick = doc.data()
+          pick.id = doc.id
+          picksArray.push(pick)
+        })
+      }).then(() => {
+        picksArray.forEach(pick => {
+          db.collection('picks').doc(pick.id).update({ isAccounted: false })
+        })
       })
     },
     updateScores () {
