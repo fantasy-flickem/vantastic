@@ -369,11 +369,9 @@ export default {
   computed: {
     logoJustification () {
       let positioning = {}
-      console.log(this._isPicked)
       positioning.top = this._isPicked ? '8.5px' : '12.5px'
       positioning.right = this._isHome ? '10px' : null
       positioning.left = this._isHome ? null : '10px'
-      console.log(positioning)
       return positioning
     }
   },
