@@ -1,5 +1,5 @@
 <template>
-  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" :viewBox=getDimensions(_teamId) version="1" style="position:absolute; top:12.5px;" :style="logoJustification">
+  <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" :viewBox=getDimensions(_teamId) version="1" style="position:absolute;" :style="logoJustification">
     <g v-if='this._teamId === "ARI"'>
       <path d="M178 130c1-22-17-37-17-37-1-14-6-34-33-49C87 22 65 40 1 1c1 7 5 17 11 24l-7-3c5 11 13 20 17 23l-8-3c8 20 24 31 24 31 3 30 25 35 26 53 29 4 58 34 58 34 16-27 38-32 56-30"/>
       <path fill="#97233f" d="M124 48C95 32 59 42 13 14c5 13 33 29 33 29l-25-8c6 11 33 25 33 25l-24-7c10 16 32 27 32 27l-14-1c2 15 23 28 24 39 10 4 22 10 31 19 19-9 14-40-21-83 48 3 46 39 74 34-2-10-4-25-32-40"/>
@@ -327,6 +327,7 @@ export default {
   name: 'Logo',
   props: [
     '_isHome',
+    '_isPicked',
     '_teamId'
   ],
   data () {
@@ -367,11 +368,11 @@ export default {
   },
   computed: {
     logoJustification () {
-      if (this._isHome) {
-        return { right: '10px' }
-      } else {
-        return { left: '10px' }
-      }
+      let positioning = {}
+      positioning.top = this._isPicked ? '8.5px' : '12.5px'
+      positioning.right = this._isHome ? '10px' : null
+      positioning.left = this._isHome ? null : '10px'
+      return positioning
     }
   },
   methods: {

@@ -1,15 +1,23 @@
 <template>
-  <div class="l-content" style="margin-bottom:50px;">
+  <div class="l-content" style="margin-bottom:50px;" :class="{ 'l-content--user-is-admin': user.isAdmin }">
     <div class="runner" style="padding-bottom:20px;">
       <div v-if='isFetchingData' style="height:100vh">
       </div>
       <div v-else v-for='(gameGroup, index) in gameGroups' :key='index' class="game__group">
         <div class="text text--handegg-text text--fs-medium text--transform-uppercase text--align-center" style="padding:10px 0;">{{ gameGroup.name }}</div>
-        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index' :_game='gameObject.game' :_adminOverrideObject='adminOverrideObject' :_myPick='gameObject.myPick' :_tribePicks='gameObject.tribePicks' :_user='user' :_userNameDictionary='userNameDictionary' :_currentlyViewedWeekNumber='currentlyViewedWeekNumber' :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
+        <Game v-for='(gameObject, index) in gameGroup.gameObjects' :key='index'
+          :_game='gameObject.game'
+          :_adminOverrideObject='adminOverrideObject'
+          :_myPick='gameObject.myPick'
+          :_tribePicks='gameObject.tribePicks'
+          :_user='user'
+          :_userNameDictionary='userNameDictionary'
+          :_currentlyViewedWeekNumber='currentlyViewedWeekNumber'
+          :_isFavoriteTeamGame='gameGroup.name === "Favorite team game"'></Game>
       </div>
     </div>
     <div class="l-footer">
-      <div v-if='user.isAdmin' class="button__group button__group--horizontal">
+      <div v-if='user.isAdmin' class="button__group button__group--horizontal" style="margin:0">
         <div class="input" style="margin-top:20px;">
           <label for="displayName">uid</label>
           <input id="displayName" type="text" v-model="adminOverrideObject.uid">
@@ -37,12 +45,12 @@ import Game from './Game'
 export default {
   name: 'Picks',
   components: { Game },
-  props: [ 'user' ],
+  props: [ 'currentWeekNumber', 'user' ],
   data () {
     return {
       adminOverrideObject: {uid: null, tribeId: null},
       currentlyViewedWeekNumber: null,
-      // favoriteTeamGame: null,
+      favoriteTeamGame: null,
       gameGroups: [],
       isFetchingData: true,
       thisWeeksGames: [],
@@ -84,15 +92,31 @@ export default {
               game.id = doc.id
               if (!game.homeTeam && !game.awayTeam) {
                 if (!game.homeTeam) {
+                  if (game.homeTeamId === this.user.favoriteTeamId) { game.isFavoriteTeamGame = true }
                   let homeTeamIndex = _teamIdsArray.indexOf(game.homeTeamId)
                   game.homeTeam = this.teams[homeTeamIndex]
                 }
                 if (!game.awayTeam) {
+                  if (game.awayTeamId === this.user.favoriteTeamId) { game.isFavoriteTeamGame = true }
                   let awayTeamIndex = _teamIdsArray.indexOf(game.awayTeamId)
                   game.awayTeam = this.teams[awayTeamIndex]
                 }
               }
               games.push(game)
+              if (game.isFavoriteTeamGame === true) {
+                let clonedGame = {
+                  awayTeam: game.awayTeam,
+                  awayTeamId: game.awayTeamId,
+                  homeTeam: game.homeTeam,
+                  homeTeamId: game.homeTeamId,
+                  id: game.id,
+                  leagueId: game.leagueId,
+                  startTime: game.startTime,
+                  week: game.week,
+                  isFavoriteTeamGame: false
+                }
+                games.push(clonedGame)
+              }
             })
             return games
           }).then(_games => {
@@ -113,8 +137,17 @@ export default {
                     let pick = doc.data()
                     pick.id = doc.id
                     if (pick.uid === userUid) {
-                      gameObject.myPick = pick
-                      gameObject.tribePicks.push(pick)
+                      // I do not care for this pattern.
+                      if (gameObject.game.isFavoriteTeamGame) {
+                        if (pick.isFavoriteTeamGame) {
+                          gameObject.myPick = pick
+                        }
+                      } else {
+                        if (!pick.isFavoriteTeamGame) {
+                          gameObject.myPick = pick
+                          gameObject.tribePicks.push(pick)
+                        }
+                      }
                     } else {
                       gameObject.tribePicks.push(pick)
                     }
@@ -134,50 +167,45 @@ export default {
                   return gameGroupObject
                 }
               }
+              let gameGroups = []
               let thursdayGames = []
               let saturdayGames = []
               let sundayEarlyGames = []
               let sundayLateGames = []
               let mondayGames = []
-              // let favoriteTeamIsPlayingThisWeek = false
               _gameObjects.forEach(gameObject => {
-                // if (gameObject.game.homeTeamId === this.user.favoriteTeamId || gameObject.game.awayTeamId === this.user.favoriteTeamId) {
-                //   favoriteTeamIsPlayingThisWeek = true
-                //   this.favoriteTeamGame = gameObject.game
-                // }
-                let startTime = gameObject.game.startTime.seconds * 1000
-                let gameDay = moment(startTime).format('dddd')
-                switch (gameDay) {
-                  case 'Thursday':
-                    thursdayGames.push(gameObject)
-                    break
-                  case 'Saturday':
-                    saturdayGames.push(gameObject)
-                    break
-                  case 'Sunday':
-                    if (Number(moment(startTime).format('kk')) < 14) {
-                      sundayEarlyGames.push(gameObject)
-                    } else {
-                      sundayLateGames.push(gameObject)
-                    }
-                    break
-                  case 'Monday':
-                    mondayGames.push(gameObject)
-                    break
-                  default:
-                    break
+                if (gameObject.game.isFavoriteTeamGame) {
+                  gameGroups.push({name: 'Favorite team game', gameObjects: [gameObject]})
+                } else {
+                  let startTime = gameObject.game.startTime.seconds * 1000
+                  let gameDay = moment(startTime).format('dddd')
+                  switch (gameDay) {
+                    case 'Thursday':
+                      thursdayGames.push(gameObject)
+                      break
+                    case 'Saturday':
+                      saturdayGames.push(gameObject)
+                      break
+                    case 'Sunday':
+                      if (Number(moment(startTime).format('kk')) < 14) {
+                        sundayEarlyGames.push(gameObject)
+                      } else {
+                        sundayLateGames.push(gameObject)
+                      }
+                      break
+                    case 'Monday':
+                      mondayGames.push(gameObject)
+                      break
+                    default:
+                      break
+                  }
                 }
               })
-              // if (!favoriteTeamIsPlayingThisWeek) {
-              //   this.favoriteTeamGame = null
-              // }
-              let gameGroups = []
               if (thursdayGames.length > 0) { gameGroups.push(createGameGroupObject('Thursday', thursdayGames)) }
               if (saturdayGames.length > 0) { gameGroups.push(createGameGroupObject('Saturday', saturdayGames)) }
               if (sundayEarlyGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday early', sundayEarlyGames)) }
               if (sundayLateGames.length > 0) { gameGroups.push(createGameGroupObject('Sunday late', sundayLateGames)) }
               if (mondayGames.length > 0) { gameGroups.push(createGameGroupObject('Monday', mondayGames)) }
-              // if (this.favoriteTeamGame) { gameGroups.push({name: 'Favorite team game', games: [this.favoriteTeamGame]}) }
               this.gameGroups = gameGroups
               this.isFetchingData = false
             })

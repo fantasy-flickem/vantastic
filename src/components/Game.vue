@@ -2,7 +2,7 @@
   <div class="game">
     <div class="button__group button__group--horizontal button__group--justify-content-space-between" style="position:relative; width:100%;">
       <Team :_team='_game.awayTeam' :_game='_game' :_myPick='myPick' :_score='_game.awayTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
-      <Picksplit :_gameId='_game.id' :_tribePicks='tribePicks' :_userNameDictionary='_userNameDictionary' :_user='_user'></Picksplit>
+      <Picksplit v-if='!_game.isFavoriteTeamGame' :_gameId='_game.id' :_tribePicks='tribePicks' :_userNameDictionary='_userNameDictionary' :_user='_user'></Picksplit>
       <Team :_team='_game.homeTeam' :_game='_game' :_myPick='myPick' :_score='_game.homeTeamScore' @send-selection='makeOrUpdatePick($event)'></Team>
     </div>
   </div>
@@ -20,7 +20,6 @@ export default {
     '_adminOverrideObject',
     '_currentlyViewedWeekNumber',
     '_game',
-    '_isFavoriteTeamGame',
     '_myPick',
     '_tribePicks',
     '_user',
@@ -43,12 +42,10 @@ export default {
         isAdminOverriding = true
       }
       let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', selectedUserUid)
-      // this.isFavoriteTeamGame will always return false until it is added back to gameGroups
-      // TODO Add favoriteTeamGame selection back in
-      if (this.isFavoriteTeamGame) {
+      if (this._game.isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
       } else {
-        this.isFavoriteTeamGame = false
+        picksRef = picksRef.where('isFavoriteTeamGame', '==', false)
       }
       picksRef.get().then(snapshot => {
         let pick = null
@@ -69,7 +66,7 @@ export default {
             teamId: _teamId,
             uid: selectedUserUid,
             tribeId: selectedTribeId,
-            isFavoriteTeamGame: this.isFavoriteTeamGame,
+            isFavoriteTeamGame: this._game.isFavoriteTeamGame,
             isAccounted: false,
             isCorrect: false,
             week: Number(this._currentlyViewedWeekNumber)
