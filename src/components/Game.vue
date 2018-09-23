@@ -33,6 +33,7 @@ export default {
   },
   methods: {
     makeOrUpdatePick (_teamId) {
+      let isFavoriteTeamGame = Boolean(this._game.isFavoriteTeamGame)
       let selectedUserUid = firebase.auth().currentUser.uid
       let selectedTribeId = this._user.tribeId
       let isAdminOverriding = false
@@ -42,7 +43,7 @@ export default {
         isAdminOverriding = true
       }
       let picksRef = db.collection('picks').where('gameId', '==', this._game.id).where('uid', '==', selectedUserUid)
-      if (this._game.isFavoriteTeamGame) {
+      if (isFavoriteTeamGame) {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', true)
       } else {
         picksRef = picksRef.where('isFavoriteTeamGame', '==', false)
@@ -66,7 +67,7 @@ export default {
             teamId: _teamId,
             uid: selectedUserUid,
             tribeId: selectedTribeId,
-            isFavoriteTeamGame: this._game.isFavoriteTeamGame,
+            isFavoriteTeamGame: isFavoriteTeamGame,
             isAccounted: false,
             isCorrect: false,
             week: Number(this._currentlyViewedWeekNumber)
