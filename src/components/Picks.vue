@@ -107,8 +107,10 @@ export default {
                 let clonedGame = {
                   awayTeam: game.awayTeam,
                   awayTeamId: game.awayTeamId,
+                  awayTeamScore: game.awayTeamScore,
                   homeTeam: game.homeTeam,
                   homeTeamId: game.homeTeamId,
+                  homeTeamScore: game.homeTeamScore,
                   id: game.id,
                   leagueId: game.leagueId,
                   startTime: game.startTime,
