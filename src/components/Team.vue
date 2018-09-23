@@ -6,7 +6,7 @@
       <div v-else-if='hasStarted' class="text text--handegg-text text--fs-hero text--line-height-fs-mega-large text--red text--transform-uppercase">Live</div>
       <div v-else class="text text--handegg-text text--fs-hero text--line-height-fs-medium text--transform-uppercase">--</div>
     </div>
-    <Logo :_teamId='_team.id' :_isHome='isHome'></Logo>
+    <Logo :_teamId='_team.id' :_isHome='isHome' :_isPicked='isPicked'></Logo>
   </button>
 </template>
 
@@ -33,6 +33,9 @@ export default {
     },
     isHome () {
       return this._team.id === this._game.homeTeamId
+    },
+    isPicked () {
+      return this._myPick && this._myPick.teamId === this._team.id
     },
     teamClasses () {
       let teamPickednessClass = ''
