@@ -138,10 +138,11 @@ export default {
                     pick.id = doc.id
                     if (pick.uid === userUid) {
                       // I do not care for this pattern.
+                      // We now have two games for each game that has the user's favorite team
+                      // Which means, this search will return 0, 1, or 2 picks TWICE
+                      // We have to find and sort two of the four permutations, and discard the other two
                       if (gameObject.game.isFavoriteTeamGame) {
-                        if (pick.isFavoriteTeamGame) {
-                          gameObject.myPick = pick
-                        }
+                        if (pick.isFavoriteTeamGame) { gameObject.myPick = pick }
                       } else {
                         if (!pick.isFavoriteTeamGame) {
                           gameObject.myPick = pick
@@ -149,7 +150,8 @@ export default {
                         }
                       }
                     } else {
-                      gameObject.tribePicks.push(pick)
+                      // Here, we are discarding other tribe member's favorite team game picks
+                      if (!pick.isFavoriteTeamGame) { gameObject.tribePicks.push(pick) }
                     }
                   })
                 }).then(() => {
