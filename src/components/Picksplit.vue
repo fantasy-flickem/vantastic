@@ -45,10 +45,14 @@ export default {
       return this._tribePicks.away.length + this._tribePicks.home.length
     },
     awayBarHeight () {
-      return (this._tribePicks.away.length / this.totalPicks) * 50
+      if (this.totalPicks) {
+        return (this._tribePicks.away.length / this.totalPicks) * 50
+      }
     },
     homeBarHeight () {
-      return (this._tribePicks.home.length / this.totalPicks) * 50
+      if (this.totalPicks) {
+        return (this._tribePicks.home.length / this.totalPicks) * 50
+      }
     }
   },
   created () {
