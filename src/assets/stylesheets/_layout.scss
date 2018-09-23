@@ -29,6 +29,12 @@
     align-items: center;
     margin-top: $button-height + 12px;
     background-color: transparent;
+
+    // Modifiers
+    // .l-content--user-is-admin
+    &--user-is-admin {
+      margin-bottom: 127px !important;
+    }
   }
   // .l-footer
   &-footer {
