@@ -4,7 +4,10 @@
       <div class="text text--handegg-text text--fs-tiny text--transform-uppercase">{{_team.id}} {{_team.name}}</div>
       <div v-if='_score' class="text text--handegg-text text--fs-hero text--line-height-fs-mega-large text--transform-uppercase">{{_score}}</div>
       <div v-else-if='hasStarted' class="text text--handegg-text text--fs-hero text--line-height-fs-mega-large text--red text--transform-uppercase">Live</div>
-      <div v-else class="text text--handegg-text text--fs-hero text--line-height-fs-medium text--transform-uppercase">--</div>
+      <div v-else class="text__row">
+        <div class="text text--handegg-text text--fs-hero text--transform-uppercase">{{_team.wins}}-{{_team.losses}}</div>
+        <div v-if='_team.ties > 0' class="text text--handegg-text text--fs-hero text--transform-uppercase">-{{_team.ties}}</div>
+      </div>
     </div>
     <Logo :_teamId='_team.id' :_isHome='isHome' :_isPicked='isPicked'></Logo>
   </button>
