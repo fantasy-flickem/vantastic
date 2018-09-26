@@ -9,7 +9,7 @@
   position: relative;
   height: $team-height;
   border: $border $dk-blue;
-  max-width: calc(50vw - 37px);
+  max-width: calc(50vw - 35px); /* 0.5 * (100vw - (80[runner] + 50[picksplit - 60[game])) */
 
   // Modifiers
   // .team--is-away

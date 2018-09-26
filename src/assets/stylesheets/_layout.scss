@@ -3,9 +3,9 @@
   &-navbar {
     position: fixed;
     top: 0;
-    right: 0;
     left: 0;
     height: $button-height + 8px;
+    width: 100%;
     background-color: $white;
     border-bottom: $border-picked $blue;
     outline: $border-picked $dk-blue;
