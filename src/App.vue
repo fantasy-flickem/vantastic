@@ -44,7 +44,7 @@ export default {
   },
   created () {
     this.getCurrentDbUser()
-    this.currentWeekNumber = moment().diff(moment('2018-09-06'), 'weeks') + 1
+    this.currentWeekNumber = moment().diff(moment('2018-09-04'), 'weeks') + 1
   },
   updated () {
     this.getCurrentDbUser()

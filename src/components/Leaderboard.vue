@@ -3,7 +3,7 @@
     <div v-if='isFetchingData'>
     </div>
     <div v-else class="runner runner--with-bottom-border" style="position:relative; min-height:60vh;">
-      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Week {{ currentWeekNumber }} leaders</div>
+      <div class="text text--fs-large text--fw-bold text--align-center" style="margin-top:10px">Current leaders</div>
       <div v-for='(tribeUser, index) in tribeUsersArray' :key='index' class="text__row text__row--spaced-padding-1" style="margin-right:20px; margin-left:20px;">
         <div class="text">{{ tribeUser.displayName }}</div>
         <div class="text">{{ tribeUser.score }}</div>
