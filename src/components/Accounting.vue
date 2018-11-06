@@ -53,16 +53,16 @@ export default {
       // Promise.all
       this.gamesArray.forEach(game => {
         if (game.homeTeamScore && game.awayTeamScore && game.isFinal) {
-          let isTie = game.homeTeamScore === game.awayTeamScore
+          let isTie = Number(game.homeTeamScore) === Number(game.awayTeamScore)
           let result = null
           if (isTie) {
             result = 'TIE'
           } else {
-            result = game.homeTeamScore > game.awayTeamScore ? game.homeTeamId : game.awayTeamId
+            result = Number(game.homeTeamScore) > Number(game.awayTeamScore) ? game.homeTeamId : game.awayTeamId
           }
           gamesRef.doc(game.id).update({
-            homeTeamScore: game.homeTeamScore,
-            awayTeamScore: game.awayTeamScore,
+            homeTeamScore: Number(game.homeTeamScore),
+            awayTeamScore: Number(game.awayTeamScore),
             isFinal: game.isFinal,
             result: result
           })
